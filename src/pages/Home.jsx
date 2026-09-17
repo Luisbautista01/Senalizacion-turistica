@@ -4511,6 +4511,370 @@ export default function Home() {
                 </div>
             </section>
 
+            {/* =========================================================
+                FOOTER
+            ========================================================= */}
+            <footer
+                className="
+                    !w-full
+                    !border-t
+                    !border-slate-200
+                    !bg-[#f8fbfb]
+                    !px-2
+                    !pt-5
+                    !pb-3
+
+                    sm:!px-4
+                    sm:!pt-6
+                    sm:!pb-4
+
+                    md:!px-6
+                    md:!pt-7
+
+                    lg:!px-8
+                "
+            >
+                <div
+                    className="
+                        !mx-auto
+                        !w-full
+                        !max-w-[1400px]
+                    "
+                >
+                    {/* =====================================================
+                        BLOQUE PRINCIPAL
+                    ===================================================== */}
+                    <div
+                        className="
+                            !flex
+                            !w-full
+                            !gap-1.5
+                            !overflow-x-auto
+                            !overflow-y-hidden
+                            !overscroll-x-contain
+                            !pb-2
+
+                            sm:!grid
+                            sm:!grid-cols-4
+                            sm:!gap-3
+                            sm:!overflow-visible
+                        "
+                    >
+                        {/* Marca */}
+                        <div
+                            className="
+                                !min-w-[220px]
+                                !shrink-0
+                                !border
+                                !border-slate-100
+                                !bg-white
+                                !p-3
+
+                                sm:!min-w-0
+                                sm:!shrink
+                                sm:!p-3.5
+                            "
+                        >
+                            <div
+                                className="
+                                    !flex
+                                    !items-center
+                                    !gap-2
+                                "
+                            >
+                                <div
+                                    className="
+                                        !flex
+                                        !h-7
+                                        !w-7
+                                        !shrink-0
+                                        !items-center
+                                        !justify-center
+                                        !rounded-sm
+                                        !bg-[#16877d]
+                                        !text-[10px]
+                                        !font-extrabold
+                                        !text-white
+                                    "
+                                >
+                                    SB
+                                </div>
+
+                                <div>
+                                    <h3
+                                        className="
+                                            !text-[11px]
+                                            !font-bold
+                                            !leading-none
+                                            !text-slate-800
+                                        "
+                                    >
+                                        San Bernardo del Viento
+                                    </h3>
+
+                                    <span
+                                        className="
+                                            !text-[8px]
+                                            !text-[#16877d]
+                                        "
+                                    >
+                                        Turismo local
+                                    </span>
+                                </div>
+                            </div>
+
+                            <p
+                                className="
+                                    !mt-2
+                                    !text-[9px]
+                                    !leading-relaxed
+                                    !text-slate-500
+                                "
+                            >
+                                Explora lugares, playas y experiencias para descubrir
+                                San Bernardo del Viento.
+                            </p>
+                        </div>
+
+                        {/* Explorar */}
+                        <div
+                            className="
+                                !min-w-[180px]
+                                !shrink-0
+                                !border
+                                !border-slate-100
+                                !bg-white
+                                !p-3
+
+                                sm:!min-w-0
+                                sm:!shrink
+                                sm:!p-3.5
+                            "
+                        >
+                            <h3
+                                className="
+                                    !mb-2
+                                    !text-[10px]
+                                    !font-bold
+                                    !uppercase
+                                    !tracking-wide
+                                    !text-slate-800
+                                "
+                            >
+                                Explorar
+                            </h3>
+
+                            <div
+                                className="
+                                    !flex
+                                    !flex-col
+                                    !gap-1
+                                "
+                            >
+                                <a
+                                    href="#home"
+                                    className="
+                                        !text-[9px]
+                                        !text-slate-500
+                                        hover:!text-[#16877d]
+                                    "
+                                >
+                                    Inicio
+                                </a>
+
+                                <a
+                                    href="#lugares"
+                                    className="
+                                        !text-[9px]
+                                        !text-slate-500
+                                        hover:!text-[#16877d]
+                                    "
+                                >
+                                    Lugares turísticos
+                                </a>
+
+                                <a
+                                    href="#mapa"
+                                    className="
+                                        !text-[9px]
+                                        !text-slate-500
+                                        hover:!text-[#16877d]
+                                    "
+                                >
+                                    Mapa
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Descubre */}
+                        <div
+                            className="
+                                !min-w-[180px]
+                                !shrink-0
+                                !border
+                                !border-slate-100
+                                !bg-white
+                                !p-3
+
+                                sm:!min-w-0
+                                sm:!shrink
+                                sm:!p-3.5
+                            "
+                        >
+                            <h3
+                                className="
+                                    !mb-2
+                                    !text-[10px]
+                                    !font-bold
+                                    !uppercase
+                                    !tracking-wide
+                                    !text-slate-800
+                                "
+                            >
+                                Descubre
+                            </h3>
+
+                            <div
+                                className="
+                                    !flex
+                                    !flex-col
+                                    !gap-1
+                                "
+                            >
+                                <span
+                                    className="
+                                        !text-[9px]
+                                        !text-slate-500
+                                    "
+                                >
+                                    Playas y naturaleza
+                                </span>
+
+                                <span
+                                    className="
+                                        !text-[9px]
+                                        !text-slate-500
+                                    "
+                                >
+                                    Rutas y recorridos
+                                </span>
+
+                                <span
+                                    className="
+                                        !text-[9px]
+                                        !text-slate-500
+                                    "
+                                >
+                                    Experiencias locales
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Información */}
+                        <div
+                            className="
+                                !min-w-[180px]
+                                !shrink-0
+                                !border
+                                !border-slate-100
+                                !bg-white
+                                !p-3
+
+                                sm:!min-w-0
+                                sm:!shrink
+                                sm:!p-3.5
+                            "
+                        >
+                            <h3
+                                className="
+                                    !mb-2
+                                    !text-[10px]
+                                    !font-bold
+                                    !uppercase
+                                    !tracking-wide
+                                    !text-slate-800
+                                "
+                            >
+                                Información
+                            </h3>
+
+                            <p
+                                className="
+                                    !text-[9px]
+                                    !leading-relaxed
+                                    !text-slate-500
+                                "
+                            >
+                                Información turística para conocer y explorar
+                                diferentes lugares de San Bernardo del Viento.
+                            </p>
+
+                            <div
+                                className="
+                                    !mt-2
+                                    !flex
+                                    !items-center
+                                    !gap-1.5
+                                    !text-[8px]
+                                    !text-slate-400
+                                "
+                            >
+                                <FaLocationArrow className="!text-[#16877d]" />
+                                <span>San Bernardo del Viento, Córdoba</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* =====================================================
+                        BARRA INFERIOR
+                    ===================================================== */}
+                    <div
+                        className="
+                            !mt-3
+                            !flex
+                            !flex-col
+                            !items-center
+                            !justify-between
+                            !gap-2
+                            !border-t
+                            !border-slate-200
+                            !pt-3
+
+                            sm:!flex-row
+                        "
+                    >
+                        <p
+                            className="
+                                !text-center
+                                !text-[8px]
+                                !text-slate-400
+
+                                sm:!text-left
+                            "
+                        >
+                            © {new Date().getFullYear()} San Bernardo del Viento.
+                            Todos los derechos reservados.
+                        </p>
+
+                        <div
+                            className="
+                                !flex
+                                !items-center
+                                !gap-3
+                                !text-[8px]
+                                !text-slate-400
+                            "
+                        >
+                            <span>Turismo local</span>
+
+                            <span className="!text-slate-300">•</span>
+
+                            <span>Descubre · Explora · Disfruta</span>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+
             {/* =====================================================
                 MODAL DETALLE
             ===================================================== */}
