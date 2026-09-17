@@ -1,15 +1,15 @@
 const touristPlaces = [
   {
-    id: "playa-del-viento",
+    id: "playas-del-viento",
     name: "Playas del Viento",
     category: "Playa",
     type: "Playa y actividades acuáticas",
 
     description:
-      "Uno de los principales atractivos costeros de San Bernardo del Viento, con extensas playas del Caribe ideales para disfrutar del paisaje, caminar y realizar actividades recreativas.",
+      "Extensa zona de playa del Caribe colombiano reconocida como uno de los principales atractivos turísticos de San Bernardo del Viento, ideal para disfrutar del mar, caminar, practicar actividades acuáticas y contemplar los atardeceres.",
 
-    lat: 9.34508,
-    lng: -76.0487,
+    lat: 9.353688128269651,
+    lng: -76.02108134793268,
 
     images: [
       "/images/places/playa-viento.jpg",
@@ -18,9 +18,11 @@ const touristPlaces = [
     tags: [
       "playa",
       "mar",
+      "caribe",
       "kitesurf",
+      "surf",
       "naturaleza",
-      "fotografía",
+      "atardecer",
     ],
 
     activities: [
@@ -28,12 +30,80 @@ const touristPlaces = [
       "Fotografía",
       "Observación del paisaje",
       "Actividades acuáticas",
+      "Surf",
+      "Disfrutar el atardecer",
+    ],
+    
+  },
+
+  {
+    id: "playas-la-ye",
+    name: "Playas de La Ye",
+    category: "Playa",
+    type: "Playa y turismo costero",
+
+    description:
+      "Sector costero de San Bernardo del Viento conocido por sus playas de arena clara, vegetación tropical y mar abierto. En la zona se encuentra el reconocido muelle turístico de La Ye.",
+
+    lat: 9.353386646371542,
+    lng: -76.02120692304821,
+
+    images: [
+      "/images/places/playas-la-ye.jpg",
     ],
 
-    recommendedMinutes: 120,
+    tags: [
+      "playa",
+      "la ye",
+      "mar",
+      "muelle",
+      "atardecer",
+      "turismo",
+    ],
 
-    audio:
-      "/audio/playa-del-viento.mp3",
+    activities: [
+      "Paseo de playa",
+      "Fotografía",
+      "Baño en el mar",
+      "Observación del paisaje",
+      "Disfrutar el atardecer",
+    ],
+
+  },
+
+  {
+    id: "muelle-turistico-la-ye",
+    name: "Muelle Turístico de La Ye",
+    category: "Turismo",
+    type: "Muelle y mirador costero",
+
+    description:
+      "Muelle turístico ubicado en el sector de La Ye. Funciona como punto de observación del paisaje marino y como uno de los lugares de referencia para visitantes en esta zona costera.",
+
+    lat: 9.353326711366702,
+    lng: -76.02093910571227,
+
+    images: [
+      "/images/places/muelle-la-ye.jpg",
+    ],
+
+    tags: [
+      "muelle",
+      "la ye",
+      "mirador",
+      "mar",
+      "fotografía",
+      "turismo",
+    ],
+
+    activities: [
+      "Fotografía",
+      "Observación del mar",
+      "Contemplar el paisaje",
+      "Disfrutar el atardecer",
+      "Caminata",
+    ],
+
   },
 
   {
@@ -43,10 +113,10 @@ const touristPlaces = [
     type: "Destino costero y comunidad pesquera",
 
     description:
-      "Corregimiento costero de San Bernardo del Viento reconocido como uno de los sectores de playa del municipio y como punto de referencia para actividades de naturaleza y recorridos por la zona.",
+      "Corregimiento costero de San Bernardo del Viento ubicado frente al mar Caribe, reconocido por sus playas, actividades pesqueras y paisajes naturales.",
 
-    lat: 9.32677,
-    lng: -76.08631,
+    lat: 9.324687072450924,
+    lng: -76.0821159929076,
 
     images: [
       "/images/places/paso-nuevo.jpg",
@@ -58,63 +128,138 @@ const touristPlaces = [
       "pesca",
       "naturaleza",
       "costa",
+      "mar",
     ],
 
     activities: [
       "Recorrido por la playa",
       "Fotografía",
       "Observación del paisaje",
+      "Pesca artesanal",
       "Turismo de naturaleza",
     ],
 
-    recommendedMinutes: 90,
   },
 
   {
-    id: "punta-piedras",
-    name: "Punta Piedras",
+    id: "punta-piedra",
+    name: "Punta Piedra",
     category: "Punta costera",
-    type: "Paisaje marino y observación",
+    type: "Paisaje marino, cuevas y naturaleza",
 
     description:
-      "Punto costero ubicado en el sector de Paso Nuevo, con paisajes del litoral Caribe y espacios de interés para disfrutar del entorno natural y realizar fotografía.",
+      "Punto costero cercano a Paso Nuevo conocido por sus paisajes, formaciones rocosas y cuevas naturales. Es un lugar de interés para la fotografía, caminatas y observación de aves.",
 
-    lat: 9.33439,
-    lng: -76.08499,
+    lat: 9.339643576548847,
+    lng: -76.07426954793293,
 
     images: [
-      "/images/places/punta-piedras.jpg",
+      "/images/places/punta-piedra.jpg",
     ],
 
     tags: [
+      "punta piedra",
       "costa",
       "mar",
-      "paisaje",
-      "fotografía",
+      "cuevas",
+      "aves",
       "naturaleza",
+      "fotografía",
     ],
 
     activities: [
       "Fotografía",
       "Caminata",
       "Observación del paisaje",
-      "Turismo de naturaleza",
+      "Avistamiento de aves",
+      "Exploración de cuevas",
     ],
 
-    recommendedMinutes: 60,
   },
 
   {
-    id: "playa-venado",
-    name: "Playa Venado",
+    id: "isla-ancon",
+    name: "Isla Ancón",
+    category: "Isla",
+    type: "Isla, playa y turismo de naturaleza",
+
+    description:
+      "Isla ubicada frente a la costa de San Bernardo del Viento, cerca de Paso Nuevo y Punta Piedra. Es reconocida como destino para recorridos en lancha, descanso, fotografía y contacto con la naturaleza.",
+
+    lat: 9.339294331302808,
+    lng: -76.08211229797342,
+
+    images: [
+      "/images/places/isla-ancon.jpg",
+    ],
+
+    tags: [
+      "isla",
+      "ancón",
+      "playa",
+      "mar",
+      "lancha",
+      "naturaleza",
+      "buceo",
+    ],
+
+    activities: [
+      "Paseo en lancha",
+      "Paseo de playa",
+      "Fotografía",
+      "Natación",
+      "Observación de fauna marina",
+      "Turismo de naturaleza",
+    ],
+
+  },
+
+  {
+    id: "playas-boca-negra",
+    name: "Playas de Boca Negra",
     category: "Playa",
     type: "Playa y turismo de naturaleza",
 
     description:
-      "Sector costero de San Bernardo del Viento, conocido también como Playa de Los Venados, ubicado al oriente de la zona de Playas del Viento.",
+      "Zona de playa de San Bernardo del Viento caracterizada por su arena, vegetación costera y oleaje moderado. Es un sector tranquilo para descansar y disfrutar del paisaje del Caribe.",
 
-    lat: 9.37145,
-    lng: -75.98467,
+    lat: 9.385031368635993,
+    lng: -75.97143296638903,
+
+    images: [
+      "/images/places/boca-negra.jpg",
+    ],
+
+    tags: [
+      "boca negra",
+      "playa",
+      "mar",
+      "caribe",
+      "naturaleza",
+      "descanso",
+    ],
+
+    activities: [
+      "Paseo de playa",
+      "Baño en el mar",
+      "Fotografía",
+      "Descanso",
+      "Observación del paisaje",
+    ],
+
+  },
+
+  {
+    id: "playa-venado",
+    name: "Playa de Los Venados",
+    category: "Playa",
+    type: "Playa y turismo de naturaleza",
+
+    description:
+      "Sector costero ubicado hacia el oriente de las Playas del Viento, conocido por sus amplias playas, paisaje natural y ambiente tranquilo.",
+
+    lat: 9.372487745319736,
+    lng: -75.98498175541069,
 
     images: [
       "/images/places/playa-venado.jpg",
@@ -134,43 +279,79 @@ const touristPlaces = [
       "Fotografía",
       "Observación del paisaje",
       "Descanso",
+      "Baño en el mar",
     ],
 
-    recommendedMinutes: 90,
   },
 
   {
-    id: "camino-real",
-    name: "Camino Real - El Paraíso",
-    category: "Destino rural",
-    type: "Naturaleza y turismo costero",
+    id: "boca-de-tinajones",
+    name: "Boca de Tinajones",
+    category: "Naturaleza",
+    type: "Desembocadura del río Sinú",
 
     description:
-      "Sector de El Paraíso - Camino Real, ubicado en la zona costera de San Bernardo del Viento y conectado con playas y comunidades rurales del municipio.",
+      "Una de las bocas de la desembocadura del río Sinú en el mar Caribe, ubicada en el territorio de San Bernardo del Viento. Es un área de gran importancia paisajística y ecológica.",
 
-    lat: 9.35662,
-    lng: -75.99119,
+    lat: 9.44014559570176,
+    lng: -75.9481050786196,
 
     images: [
-      "/images/places/camino-real.jpg",
+      "/images/places/boca-tinajones.jpg",
     ],
 
     tags: [
-      "camino real",
-      "paraíso",
-      "rural",
+      "boca de tinajones",
+      "río sinú",
+      "mar",
+      "desembocadura",
       "naturaleza",
-      "playa",
+      "aves",
     ],
 
     activities: [
-      "Recorridos",
       "Fotografía",
+      "Observación de aves",
+      "Recorrido en embarcación",
+      "Observación del paisaje",
       "Turismo de naturaleza",
-      "Visita a playas cercanas",
     ],
 
-    recommendedMinutes: 90,
+  },
+
+  {
+    id: "rio-sinu",
+    name: "Río Sinú",
+    category: "Naturaleza",
+    type: "Río y ecosistema ribereño",
+
+    description:
+      "El río Sinú atraviesa el territorio de San Bernardo del Viento y llega al mar Caribe formando un sistema de bocas, caños, humedales y manglares de gran importancia ecológica.",
+
+    lat: 8.768345349275599,
+    lng: -75.96676545221705,
+
+    images: [
+      "/images/places/rio-sinu.jpg",
+    ],
+
+    tags: [
+      "río sinú",
+      "río",
+      "naturaleza",
+      "aves",
+      "pesca",
+      "manglar",
+    ],
+
+    activities: [
+      "Recorridos en lancha",
+      "Fotografía",
+      "Pesca",
+      "Observación de aves",
+      "Turismo de naturaleza",
+    ],
+
   },
 
   {
@@ -180,21 +361,23 @@ const touristPlaces = [
     type: "Ecosistema de manglar y humedales",
 
     description:
-      "Zona natural de gran importancia ecológica en San Bernardo del Viento, formada por caños, humedales y manglares asociados a la dinámica del bajo río Sinú.",
+      "Importante sistema natural de caños, humedales y manglares conectado con la cuenca baja del río Sinú. Es un espacio de interés para el ecoturismo y la observación de biodiversidad.",
 
-    lat: 9.39423,
-    lng: -75.90972,
+    lat: 9.39414,
+    lng: -75.90856,
 
     images: [
       "/images/places/cano-grande.jpg",
     ],
 
     tags: [
+      "caño grande",
       "manglar",
       "humedal",
       "aves",
       "río",
       "naturaleza",
+      "ecoturismo",
     ],
 
     activities: [
@@ -202,77 +385,117 @@ const touristPlaces = [
       "Fotografía de naturaleza",
       "Recorridos en embarcación",
       "Observación de manglares",
+      "Ecoturismo",
     ],
 
-    recommendedMinutes: 150,
   },
 
   {
-    id: "cano-sicara",
-    name: "Caño Sicará",
-    category: "Manglar",
-    type: "Manglares y humedales",
+    id: "cano-la-balsa",
+    name: "Caño La Balsa",
+    category: "Naturaleza",
+    type: "Caño, humedales y manglares",
 
     description:
-      "Sector natural de San Bernardo del Viento asociado a manglares y humedales fluviales, con importancia para el turismo de naturaleza y la observación de biodiversidad.",
+      "Sistema natural de caños y humedales asociado a la dinámica hídrica de San Bernardo del Viento. La Balsa hace parte de los ecosistemas naturales de la zona y conecta sectores de humedal con el sistema del río Sinú.",
 
-    lat: 9.39353,
-    lng: -75.89109,
+    lat: 9.358510383606422,
+    lng: -75.9769719270317,
 
     images: [
-      "/images/places/cano-sicara.jpg",
+      "/images/places/cano-de-la-balsa.png",
     ],
 
     tags: [
+      "caño la balsa",
+      "la balsa",
       "manglar",
-      "sicarà",
       "humedal",
-      "aves",
+      "río sinú",
       "naturaleza",
     ],
 
     activities: [
-      "Avistamiento de aves",
+      "Recorrido en lancha",
       "Fotografía",
-      "Recorridos ecológicos",
+      "Observación de aves",
       "Observación de manglares",
-    ],
-
-    recommendedMinutes: 120,
-  },
-
-  {
-    id: "punta-tortuguero",
-    name: "Punta Tortuguero",
-    category: "Playa",
-    type: "Paisaje costero",
-
-    description:
-      "Punto de playa ubicado en la zona costera de San Bernardo del Viento, asociado también con los nombres Punta del Viento, Punta Los Venados y Punta Venados.",
-
-    lat: 9.42539,
-    lng: -75.90308,
-
-    images: [
-      "/images/places/punta-tortuguero.jpg",
-    ],
-
-    tags: [
-      "playa",
-      "punta",
-      "mar",
-      "paisaje",
-      "naturaleza",
-    ],
-
-    activities: [
-      "Fotografía",
-      "Observación del paisaje",
-      "Caminata",
       "Turismo de naturaleza",
     ],
 
+  },
+
+  {
+    id: "paso-nuevo-playa",
+    name: "Playa de Paso Nuevo",
+    category: "Playa",
+    type: "Playa y comunidad costera",
+
+    description:
+      "Franja costera ubicada frente al corregimiento de Paso Nuevo, con paisajes del mar Caribe y actividades tradicionales relacionadas con la pesca y la vida costera.",
+
+    lat: 9.32504,
+    lng: -76.08744,
+
+    images: [
+      "/images/places/playa-paso-nuevo.jpg",
+    ],
+
+    tags: [
+      "paso nuevo",
+      "playa",
+      "mar",
+      "pesca",
+      "costa",
+    ],
+
+    activities: [
+      "Paseo de playa",
+      "Fotografía",
+      "Pesca artesanal",
+      "Baño en el mar",
+      "Observación del paisaje",
+    ],
+
     recommendedMinutes: 90,
+  },
+
+  {
+    id: "isla-fuerte",
+    name: "Isla Fuerte",
+    category: "Isla",
+    type: "Destino insular y turismo de naturaleza",
+
+    description:
+      "Isla ubicada frente a las costas de Córdoba, reconocida por sus playas, arrecifes coralinos, biodiversidad marina y actividades como buceo, snorkel y recorridos en lancha.",
+
+    lat: 9.387748522998837,
+    lng: -76.18008122138392,
+
+    images: [
+      "/images/places/isla-fuerte.jpg",
+    ],
+
+    tags: [
+      "isla fuerte",
+      "isla",
+      "playa",
+      "buceo",
+      "snorkel",
+      "corales",
+      "mar",
+      "naturaleza",
+    ],
+
+    activities: [
+      "Paseo en lancha",
+      "Buceo",
+      "Snorkel",
+      "Fotografía",
+      "Paseo de playa",
+      "Observación de fauna marina",
+    ],
+
   },
 
   {
@@ -282,10 +505,10 @@ const touristPlaces = [
     type: "Espacio público y encuentro local",
 
     description:
-      "Espacio público ubicado en la cabecera municipal de San Bernardo del Viento, ideal como punto de inicio para conocer el municipio y continuar hacia sus atractivos naturales.",
+      "Espacio público ubicado en la cabecera municipal, ideal como punto de inicio para conocer el centro de San Bernardo del Viento y continuar hacia sus atractivos naturales y culturales.",
 
-    lat: 9.35292,
-    lng: -75.95224,
+    lat: 9.353110156190231,
+    lng: -75.95197090004797,
 
     images: [
       "/images/places/parque-central.jpg",
@@ -306,40 +529,83 @@ const touristPlaces = [
       "Recorrido urbano",
     ],
 
-    recommendedMinutes: 45,
   },
 
   {
-    id: "plaza-san-bernardo",
-    name: "Plaza de San Bernardo",
-    category: "Cultura",
-    type: "Espacio público",
+    id: "volcan-lodo-el-salvador",
+    name: "Volcán de Lodo El Salvador",
+    category: "Naturaleza",
+    type: "Formación natural y geoturismo",
 
     description:
-      "Zona de recreación localizada en la cabecera municipal, cercana al Parque Central y a otros puntos de interés del centro de San Bernardo del Viento.",
+      "Formación natural de interés para el turismo de naturaleza y geoturismo en el territorio de San Bernardo del Viento.",
 
-    lat: 9.35099,
-    lng: -75.95318,
+    lat: 9.312590809621943,
+    lng: -76.09906084202919,
 
     images: [
-      "/images/places/plaza-san-bernardo.jpg",
+      "/images/places/volcan-lodo-salvador.jpg",
     ],
 
     tags: [
-      "plaza",
-      "cultura",
-      "centro",
-      "pueblo",
+      "volcán de lodo",
+      "el salvador",
+      "naturaleza",
+      "geoturismo",
+      "lodo",
     ],
 
     activities: [
-      "Caminata",
+      "Observación de la formación natural",
       "Fotografía",
-      "Descanso",
-      "Recorrido urbano",
+      "Turismo de naturaleza",
+      "Geoturismo",
     ],
 
-    recommendedMinutes: 30,
+  },
+
+  /*
+   * DESTINO EXTERNO / REGIONAL
+   *
+   * No pertenece al municipio de San Bernardo del Viento,
+   * pero puede ofrecerse como destino conectado desde la zona.
+   */
+
+  {
+    id: "archipielago-san-bernardo",
+    name: "Archipiélago de San Bernardo",
+    category: "Isla",
+    type: "Archipiélago y turismo marino",
+
+    description:
+      "Conjunto de islas y cayos del Caribe colombiano reconocido por sus playas, aguas cálidas y ecosistemas marinos. Es un destino regional diferente al municipio de San Bernardo del Viento.",
+
+    lat: 9.721327391714938,
+    lng: -75.77874581887426,
+
+    images: [
+      "/images/places/archipielago-san-bernardo.jpg",
+    ],
+
+    tags: [
+      "archipiélago",
+      "islas",
+      "mar",
+      "caribe",
+      "playa",
+      "buceo",
+      "snorkel",
+    ],
+
+    activities: [
+      "Paseo en lancha",
+      "Buceo",
+      "Snorkel",
+      "Paseo de playa",
+      "Fotografía",
+      "Observación de fauna marina",
+    ],
+
   },
 ];
 

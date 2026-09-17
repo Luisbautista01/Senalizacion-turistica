@@ -612,47 +612,6 @@ function MapSizeController({
     return null;
 }
 
-function UserLocationController({
-    userLocation,
-    locateUser,
-}) {
-    const map = useMap();
-
-    useEffect(() => {
-        if (!locateUser || !userLocation) {
-            return;
-        }
-
-        const coordinates = [
-            Number(userLocation.lat),
-            Number(userLocation.lng),
-        ];
-
-        if (
-            !Number.isFinite(coordinates[0]) ||
-            !Number.isFinite(coordinates[1])
-        ) {
-            return;
-        }
-
-        map.invalidateSize();
-
-        map.flyTo(
-            coordinates,
-            15,
-            {
-                duration: 0.8,
-            }
-        );
-    }, [
-        map,
-        userLocation,
-        locateUser,
-    ]);
-
-    return null;
-}
-
 function RouteController({
     coordinates,
 }) {
@@ -771,18 +730,6 @@ export default function Home() {
         );
     }, []);
 
-    const touristRoutes = useMemo(() => {
-        const source = Array.isArray(
-            touristRoutesData
-        )
-            ? touristRoutesData
-            : touristRoutesData?.routes;
-
-        return Array.isArray(source)
-            ? source
-            : [];
-    }, []);
-
     /* =======================================================
         ESTADOS
     ======================================================= */
@@ -855,10 +802,6 @@ export default function Home() {
         x: 0,
         y: 0,
     });
-
-    const [locationLoading, setLocationLoading] = useState(false);
-
-    const [locateUser, setLocateUser] = useState(false);
 
     const modalDragRef = useRef({
         dragging: false,
@@ -1783,72 +1726,6 @@ export default function Home() {
         }
     }, [showDetail]);
 
-    const getUserLocation = useCallback(() => {
-        if (!navigator.geolocation) {
-            setLocationError(
-                "Tu navegador no permite obtener la ubicación."
-            );
-            return;
-        }
-
-        setLocationLoading(true);
-        setLocationError(null);
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const {
-                    latitude,
-                    longitude,
-                    accuracy,
-                } = position.coords;
-
-                const location = {
-                    lat: latitude,
-                    lng: longitude,
-                    latitude,
-                    longitude,
-                    accuracy,
-                };
-
-                setUserLocation(location);
-                setLocationLoading(false);
-            },
-            (error) => {
-                setLocationLoading(false);
-
-                switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                        setLocationError(
-                            "Permiso de ubicación denegado."
-                        );
-                        break;
-
-                    case error.POSITION_UNAVAILABLE:
-                        setLocationError(
-                            "No fue posible obtener tu ubicación."
-                        );
-                        break;
-
-                    case error.TIMEOUT:
-                        setLocationError(
-                            "La ubicación tardó demasiado en responder."
-                        );
-                        break;
-
-                    default:
-                        setLocationError(
-                            "No fue posible obtener tu ubicación."
-                        );
-                }
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0,
-            }
-        );
-    }, []);
-
     /* =======================================================
        RENDER
     ======================================================= */
@@ -2438,155 +2315,106 @@ export default function Home() {
 
                     <div
                         className="
-                            !relative
-                            !min-w-0
-                            !w-full
-
-                            lg:!flex-1
-                        "
-                    >
-                        <FaSearch
-                            className="
-                                !pointer-events-none
-                                !absolute
-                                !left-3
-                                !top-1/2
-                                !z-10
-                                !-translate-y-1/2
-                                !text-[10px]
-                                !text-slate-400
-
-                                sm:!text-[11px]
-                            "
-                        />
-
-                        <input
-                            ref={searchRef}
-                            value={search}
-                            onChange={(event) =>
-                                setSearch(event.target.value)
-                            }
-                            placeholder="Buscar lugares, playas, restaurantes, atractivos..."
-                            className="
-                                !h-10
-                                !w-full
-                                !rounded-sm
-                                !border
-                                !border-slate-200
-                                !bg-white
-                                !pl-8
-                                !pr-9
-                                !text-[10px]
-                                !font-medium
-                                !text-slate-700
-                                !outline-none
-                                !transition-all
-
-                                placeholder:!text-slate-400
-
-                                focus:!border-[#2aa7b0]
-                                focus:!ring-2
-                                focus:!ring-[#2aa7b0]/10
-
-                                sm:!h-11
-                                sm:!text-[11px]
-
-                                lg:!text-[12px]
-                            "
-                        />
-
-                        {search && (
-                            <button
-                                type="button"
-                                onClick={clearSearch}
-                                className="
-                                    !absolute
-                                    !right-1.5
-                                    !top-1/2
-                                    !flex
-                                    !h-7
-                                    !w-7
-                                    !-translate-y-1/2
-                                    !items-center
-                                    !justify-center
-                                    !rounded-sm
-                                    !text-slate-400
-                                    !transition-all
-
-                                    hover:!bg-slate-100
-                                    hover:!text-slate-700
-                                "
-                                aria-label="Limpiar búsqueda"
-                            >
-                                <FaTimes className="!text-[10px]" />
-                            </button>
-                        )}
-                    </div>
-
-                    {/* =================================================
-                        CONTROLES
-                    ================================================= */}
-
-                    <div
-                        className="
                             !flex
                             !w-full
                             !min-w-0
                             !items-center
                             !gap-1
 
-                            lg:!w-auto
-                            lg:!shrink-0
+                            lg:!flex-1
                         "
                     >
-
                         {/* =================================================
-                            RUTAS
+                            BUSCADOR
                         ================================================= */}
-
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setShowRoutes(
-                                    (current) => !current
-                                )
-                            }
-                            className={`
-                                !flex
-                                !h-10
+                        <div
+                            className="
+                                !relative
                                 !min-w-0
                                 !flex-1
-                                !items-center
-                                !justify-center
-                                !gap-1.5
-                                !rounded-sm
-                                !border
-                                !px-3
-                                !text-[8px]
-                                !font-bold
-                                !transition-all
-
-                                sm:!text-[9px]
-
-                                lg:!w-[110px]
-                                lg:!flex-none
-                                lg:!text-[11px]
-
-                                ${showRoutes
-                                    ? "!border-[#168795] !bg-[#edf8f6] !text-[#168795]"
-                                    : "!border-slate-200 !bg-white !text-slate-600 hover:!border-[#2aa7b0] hover:!text-[#168795]"
-                                }
-                            `}
+                            "
                         >
-                            <FaRoute className="!shrink-0" />
+                            <FaSearch
+                                className="
+                                    !pointer-events-none
+                                    !absolute
+                                    !left-3
+                                    !top-1/2
+                                    !z-10
+                                    !-translate-y-1/2
+                                    !text-[10px]
+                                    !text-slate-400
 
-                            <span>Rutas</span>
-                        </button>
+                                    sm:!text-[11px]
+                                "
+                            />
+
+                            <input
+                                ref={searchRef}
+                                value={search}
+                                onChange={(event) =>
+                                    setSearch(event.target.value)
+                                }
+                                placeholder="Buscar lugares, playas, restaurantes, atractivos..."
+                                className="
+                                    !h-10
+                                    !w-full
+                                    !rounded-sm
+                                    !border
+                                    !border-slate-200
+                                    !bg-white
+                                    !pl-8
+                                    !pr-9
+                                    !text-[10px]
+                                    !font-medium
+                                    !text-slate-700
+                                    !outline-none
+                                    !transition-all
+
+                                    placeholder:!text-slate-400
+
+                                    focus:!border-[#2aa7b0]
+                                    focus:!ring-2
+                                    focus:!ring-[#2aa7b0]/10
+
+                                    sm:!h-11
+                                    sm:!text-[11px]
+
+                                    lg:!text-[12px]
+                                "
+                            />
+
+                            {search && (
+                                <button
+                                    type="button"
+                                    onClick={clearSearch}
+                                    className="
+                                        !absolute
+                                        !right-1.5
+                                        !top-1/2
+                                        !flex
+                                        !h-7
+                                        !w-7
+                                        !-translate-y-1/2
+                                        !items-center
+                                        !justify-center
+                                        !rounded-sm
+                                        !text-slate-400
+                                        !transition-all
+
+                                        hover:!bg-slate-100
+                                        hover:!text-slate-700
+                                    "
+                                    aria-label="Limpiar búsqueda"
+                                >
+                                    <FaTimes className="!text-[10px]" />
+                                </button>
+                            )}
+                        </div>
 
                         {/* =================================================
                             VER MAPA
                         ================================================= */}
-
                         <button
                             type="button"
                             onClick={() =>
@@ -2599,25 +2427,30 @@ export default function Home() {
                             className={`
                                 !flex
                                 !h-10
+                                !w-10
                                 !shrink-0
                                 !items-center
                                 !justify-center
                                 !gap-1.5
                                 !rounded-sm
                                 !border
-                                !px-3
-                                !text-[8px]
+                                !px-0
+                                !text-[9px]
                                 !font-bold
                                 !transition-all
                                 !duration-200
 
+                                sm:!h-11
+                                sm:!w-auto
+                                sm:!px-3
                                 sm:!text-[9px]
 
                                 lg:!text-[11px]
 
-                                ${viewMode === "map"
-                                    ? "!border-[#168795] !bg-[#edf8f6] !text-[#168795]"
-                                    : "!border-[#2d6b4f] !bg-[#2d6b4f] !text-white hover:!bg-[#24563f]"
+                                ${
+                                    viewMode === "map"
+                                        ? "!border-[#168795] !bg-[#edf8f6] !text-[#168795]"
+                                        : "!border-[#2d6b4f] !bg-[#2d6b4f] !text-white hover:!bg-[#24563f]"
                                 }
                             `}
                             title={
@@ -2630,17 +2463,22 @@ export default function Home() {
                                 <>
                                     <FaTimes className="!text-[10px]" />
 
-                                    Ocultar mapa
+                                    <span className="!hidden sm:!inline">
+                                        Ocultar mapa
+                                    </span>
                                 </>
                             ) : (
                                 <>
                                     <FaMap className="!text-[10px]" />
 
-                                    Ver mapa
+                                    <span className="!hidden sm:!inline">
+                                        Ver mapa
+                                    </span>
                                 </>
                             )}
                         </button>
                     </div>
+
                 </div>
 
                 {/* =====================================================
@@ -2711,15 +2549,25 @@ export default function Home() {
                         !grid
                         !w-full
                         !min-w-0
-                        !grid-cols-1
                         !gap-2
                         !transition-[grid-template-columns]
                         !duration-150
                         !ease-out
 
-                        ${viewMode === "map"
-                            ? "lg:!grid-cols-[minmax(0,440px)_minmax(0,1fr)] xl:!grid-cols-[minmax(0,470px)_minmax(0,1fr)] 2xl:!grid-cols-[minmax(0,500px)_minmax(0,1fr)]"
-                            : "lg:!grid-cols-[minmax(0,1fr)_0fr]"
+                        ${
+                            viewMode === "map"
+                                ? `
+                                    !grid-cols-[minmax(0,3fr)_minmax(0,7fr)]
+
+                                    lg:!grid-cols-[minmax(0,440px)_minmax(0,1fr)]
+                                    xl:!grid-cols-[minmax(0,470px)_minmax(0,1fr)]
+                                    2xl:!grid-cols-[minmax(0,500px)_minmax(0,1fr)]
+                                `
+                                : `
+                                    !grid-cols-1
+
+                                    lg:!grid-cols-[minmax(0,1fr)_0fr]
+                                `
                         }
                     `}
                 >
@@ -2730,30 +2578,57 @@ export default function Home() {
                     <aside
                         className={`
                             !min-w-0
+                            !min-h-0
+                            !w-full
+                            !self-start
                             !transition-opacity
                             !duration-150
                             !ease-out
 
-                            ${viewMode === "map"
-                                ? "lg:!h-[calc(100vh-175px)] lg:!min-h-[560px] lg:!max-h-[850px]"
-                                : ""
+                            ${
+                                viewMode === "map"
+                                    ? `
+                                        !h-[330px]
+                                        !min-h-[330px]
+                                        !max-h-[330px]
+
+                                        sm:!h-[360px]
+                                        sm:!min-h-[360px]
+                                        sm:!max-h-[360px]
+
+                                        md:!h-[420px]
+                                        md:!min-h-[420px]
+                                        md:!max-h-[420px]
+
+                                        lg:!h-[calc(100vh-175px)]
+                                        lg:!min-h-[560px]
+                                        lg:!max-h-[850px]
+                                    `
+                                    : `
+                                        !h-auto
+                                        !min-h-0
+                                        !max-h-none
+                                    `
                             }
                         `}
                     >
                         <div
                             className={`
                                 !flex
+                                !h-full
                                 !w-full
                                 !min-w-0
                                 !flex-col
+                                !overflow-hidden
                                 !rounded-md
                                 !border
                                 !border-slate-200
                                 !bg-white
 
-                                ${viewMode === "map"
-                                    ? "lg:!h-full lg:!overflow-hidden"
-                                    : ""
+                                ${
+                                    viewMode === "map"
+                                        ? ""
+                                        : "lg:!h-auto lg:!overflow-visible"
                                 }
                             `}
                         >
@@ -2762,70 +2637,146 @@ export default function Home() {
                             ================================================= */}
 
                             <div
-                                className="
+                                className={`
                                     !flex
                                     !shrink-0
                                     !items-center
                                     !justify-between
-                                    !gap-2
+                                    !gap-1
                                     !border-b
                                     !border-slate-100
-                                    !px-2.5
-                                    !py-2.5
 
-                                    sm:!px-3
-                                "
+                                    ${
+                                        viewMode === "map"
+                                            ? `
+                                                !px-1.5
+                                                !py-1.5
+
+                                                sm:!px-2
+                                                sm:!py-2
+
+                                                lg:!px-2.5
+                                                lg:!py-2.5
+                                            `
+                                            : `
+                                                !px-2.5
+                                                !py-2.5
+
+                                                sm:!px-3
+                                            `
+                                    }
+                                `}
                             >
                                 <div className="!min-w-0">
                                     <div
                                         className="
                                             !flex
                                             !items-center
-                                            !gap-1.5
+                                            !gap-1
                                         "
                                     >
+                                        {/* ICONO */}
+
                                         <div
-                                            className="
+                                            className={`
                                                 !flex
-                                                !h-7
-                                                !w-7
                                                 !shrink-0
                                                 !items-center
                                                 !justify-center
                                                 !rounded-sm
                                                 !bg-[#edf8f6]
                                                 !text-[#168795]
-                                            "
+
+                                                ${
+                                                    viewMode === "map"
+                                                        ? `
+                                                            !h-5
+                                                            !w-5
+
+                                                            sm:!h-6
+                                                            sm:!w-6
+
+                                                            lg:!h-7
+                                                            lg:!w-7
+                                                        `
+                                                        : `
+                                                            !h-7
+                                                            !w-7
+                                                        `
+                                                }
+                                            `}
                                         >
-                                            <FaMapMarkerAlt className="!text-[10px]" />
+                                            <FaMapMarkerAlt
+                                                className={`
+                                                    ${
+                                                        viewMode === "map"
+                                                            ? `
+                                                                !text-[7px]
+
+                                                                sm:!text-[8px]
+
+                                                                lg:!text-[10px]
+                                                            `
+                                                            : "!text-[10px]"
+                                                    }
+                                                `}
+                                            />
                                         </div>
 
                                         <div className="!min-w-0">
                                             <h2
-                                                className="
+                                                className={`
                                                     !m-0
                                                     !truncate
-                                                    !text-[11px]
                                                     !font-bold
                                                     !leading-tight
                                                     !text-slate-800
 
-                                                    sm:!text-[12px]
-                                                "
+                                                    ${
+                                                        viewMode === "map"
+                                                            ? `
+                                                                !text-[8px]
+
+                                                                sm:!text-[10px]
+
+                                                                lg:!text-[11px]
+                                                            `
+                                                            : `
+                                                                !text-[11px]
+
+                                                                sm:!text-[12px]
+                                                            `
+                                                    }
+                                                `}
                                             >
                                                 Lugares turísticos
                                             </h2>
 
                                             <p
-                                                className="
+                                                className={`
                                                     !m-0
                                                     !mt-0.5
-                                                    !text-[7px]
+                                                    !truncate
                                                     !leading-tight
                                                     !text-slate-400
 
-                                                    sm:!text-[9px]
-                                                "
+                                                    ${
+                                                        viewMode === "map"
+                                                            ? `
+                                                                !hidden
+
+                                                                sm:!block
+                                                                sm:!text-[7px]
+
+                                                                lg:!text-[9px]
+                                                            `
+                                                            : `
+                                                                !text-[7px]
+
+                                                                sm:!text-[9px]
+                                                            `
+                                                    }
+                                                `}
                                             >
                                                 Explora destinos y atractivos
                                             </p>
@@ -2833,38 +2784,77 @@ export default function Home() {
                                     </div>
                                 </div>
 
+                                {/* CONTADOR */}
+
                                 <span
-                                    className="
-                                    !flex
-                                    !h-7
-                                    !min-w-7
-                                    !items-center
-                                    !justify-center
-                                    !rounded-sm
-                                    !bg-[#edf8f6]
-                                    !px-2
-                                    !text-[9px]
-                                    !font-bold
-                                    !text-[#168795]
-                                "
+                                    className={`
+                                        !flex
+                                        !shrink-0
+                                        !items-center
+                                        !justify-center
+                                        !rounded-sm
+                                        !bg-[#edf8f6]
+                                        !font-bold
+                                        !text-[#168795]
+
+                                        ${
+                                            viewMode === "map"
+                                                ? `
+                                                    !h-5
+                                                    !min-w-5
+                                                    !px-1
+                                                    !text-[7px]
+
+                                                    sm:!h-6
+                                                    sm:!min-w-6
+                                                    sm:!text-[8px]
+
+                                                    lg:!h-7
+                                                    lg:!min-w-7
+                                                    lg:!px-2
+                                                    lg:!text-[9px]
+                                                `
+                                                : `
+                                                    !h-7
+                                                    !min-w-7
+                                                    !px-2
+                                                    !text-[9px]
+                                                `
+                                        }
+                                    `}
                                 >
                                     {filteredPlaces.length}
                                 </span>
                             </div>
 
                             {/* =================================================
-                                LISTADO DE LUGARES
+                                LISTADO
                             ================================================= */}
+
                             <div
                                 className={`
+                                    !min-h-0
                                     !min-w-0
-                                    !p-1.5
-                                    sm:!p-2.5
+                                    !flex-1
+                                    !overflow-y-auto
+                                    !overscroll-contain
 
                                     ${
                                         viewMode === "map"
-                                            ? "lg:!min-h-0 lg:!flex-1 lg:!overflow-y-auto"
-                                            : ""
+                                            ? `
+                                                !p-0.5
+
+                                                sm:!p-1
+
+                                                lg:!p-1.5
+                                            `
+                                            : `
+                                                !p-1
+
+                                                sm:!p-1.5
+
+                                                lg:!overflow-visible
+                                            `
                                     }
                                 `}
                             >
@@ -2872,7 +2862,7 @@ export default function Home() {
                                     <div
                                         className="
                                             !flex
-                                            !min-h-[220px]
+                                            !min-h-[150px]
                                             !items-center
                                             !justify-center
                                             !rounded-md
@@ -2880,11 +2870,17 @@ export default function Home() {
                                             !border-dashed
                                             !border-slate-200
                                             !bg-slate-50
-                                            !px-5
+                                            !px-2
                                             !text-center
-                                            !text-[11px]
+                                            !text-[8px]
                                             !font-medium
                                             !text-slate-500
+
+                                            sm:!text-[9px]
+
+                                            lg:!min-h-[190px]
+                                            lg:!px-4
+                                            lg:!text-[10px]
                                         "
                                     >
                                         No encontramos lugares con esa búsqueda.
@@ -2892,768 +2888,728 @@ export default function Home() {
                                 ) : (
                                     <div
                                         className={`
-                                            !grid
+                                            !w-full
                                             !min-w-0
-                                            !grid-cols-2
-                                            !gap-1.5
-
-                                            sm:!grid-cols-2
-                                            sm:!gap-2
+                                            !self-start
 
                                             ${
                                                 viewMode === "map"
-                                                    ? "lg:!grid-cols-1"
-                                                    : "lg:!grid-cols-3 xl:!grid-cols-5"
+                                                    ? `
+                                                        !h-[300px]
+                                                        !max-h-[300px]
+                                                        !overflow-y-auto
+                                                        !overflow-x-hidden
+                                                        !overscroll-contain
+
+                                                        sm:!h-[360px]
+                                                        sm:!max-h-[360px]
+
+                                                        md:!h-[420px]
+                                                        md:!max-h-[420px]
+
+                                                        lg:!h-auto
+                                                        lg:!max-h-none
+                                                        lg:!overflow-visible
+                                                    `
+                                                    : `
+                                                        !h-auto
+                                                        !max-h-none
+                                                        !overflow-visible
+                                                    `
                                             }
                                         `}
                                     >
-                                        {filteredPlaces.map((place) => {
-                                            const id = getPlaceId(place);
+                                        <div
+                                            className={`
+                                                !grid
+                                                !w-full
+                                                !min-w-0
+                                                !content-start
+                                                !items-start
 
-                                            const selected =
-                                                getPlaceId(selectedPlace) === id;
+                                                ${
+                                                    viewMode === "map"
+                                                        ? `
+                                                            !grid-cols-1
+                                                            !gap-0.5
 
-                                            const distance =
-                                                place.calculatedDistance;
+                                                            sm:!gap-1
 
-                                            const image =
-                                                getPlaceImage(place);
+                                                            lg:!grid-cols-1
+                                                            lg:!gap-1
+                                                        `
+                                                        : `
+                                                            !grid-cols-3
+                                                            !gap-1
 
-                                            const favorite =
-                                                isFavorite(place);
+                                                            sm:!grid-cols-3
+                                                            sm:!gap-1.5
 
-                                            const visited =
-                                                isVisited(place);
+                                                            md:!grid-cols-3
+                                                            md:!gap-2
 
-                                            return (
-                                                <article
-                                                    key={id}
-                                                    onClick={() =>
-                                                        openPlace(place)
-                                                    }
-                                                    className={`
-                                                        !group
-                                                        !relative
-                                                        !min-w-0
-                                                        !cursor-pointer
-                                                        !overflow-hidden
-                                                        !rounded-md
-                                                        !border
-                                                        !bg-white
-                                                        !text-left
+                                                            lg:!grid-cols-3
+                                                            lg:!gap-2
 
-                                                        !transition-colors
-                                                        !duration-150
+                                                            xl:!grid-cols-5
+                                                            xl:!gap-2
+                                                        `
+                                                }
+                                            `}
+                                        >
+                                            {filteredPlaces.map((place) => {
+                                                const id = getPlaceId(place);
 
-                                                        ${
-                                                            selected
-                                                                ? "!border-[#2aa7b0] !bg-[#f5fbfa] !ring-1 !ring-[#2aa7b0]/10"
-                                                                : "!border-slate-200"
-                                                        }
+                                                const selected =
+                                                    getPlaceId(selectedPlace) === id;
 
-                                                        ${
-                                                            viewMode === "map"
-                                                                ? "lg:!grid lg:!grid-cols-[135px_minmax(0,1fr)]"
-                                                                : ""
-                                                        }
-                                                    `}
-                                                >
-                                                    {/* =================================================
-                                                        IMAGEN
-                                                    ================================================= */}
+                                                const distance =
+                                                    place.calculatedDistance;
 
-                                                    <div
+                                                const image =
+                                                    getPlaceImage(place);
+
+                                                const favorite =
+                                                    isFavorite(place);
+
+                                                const visited =
+                                                    isVisited(place);
+
+                                                return (
+                                                    <article
+                                                        key={id}
+                                                        onClick={() => openPlace(place)}
                                                         className={`
+                                                            !group
                                                             !relative
+                                                            !min-w-0
+                                                            !cursor-pointer
                                                             !overflow-hidden
-                                                            !bg-[#edf7f5]
+                                                            !rounded-md
+                                                            !border
+                                                            !bg-white
+                                                            !text-left
+                                                            !transition-all
+                                                            !duration-150
+
+                                                            ${
+                                                                selected
+                                                                    ? "!border-[#2aa7b0] !bg-[#f5fbfa] !ring-1 !ring-[#2aa7b0]/10"
+                                                                    : "!border-slate-200"
+                                                            }
 
                                                             ${
                                                                 viewMode === "map"
-                                                                    ? "lg:!h-[114px]"
-                                                                    : "!aspect-[1.2/1] sm:!aspect-[1.45/1]"
+                                                                    ? `
+                                                                        !flex
+                                                                        !min-h-[38px]
+                                                                        !items-center
+                                                                        !gap-0.5
+                                                                        !px-0.5
+                                                                        !py-0.5
+
+                                                                        sm:!min-h-[42px]
+                                                                        sm:!gap-1
+                                                                        sm:!px-1
+                                                                        sm:!py-0.5
+
+                                                                        lg:!grid
+                                                                        lg:!min-h-0
+                                                                        lg:!grid-cols-[115px_minmax(0,1fr)]
+                                                                        lg:!gap-0
+                                                                        lg:!p-0
+                                                                    `
+                                                                    : `
+                                                                        !flex
+                                                                        !flex-col
+                                                                    `
                                                             }
                                                         `}
                                                     >
-                                                        {image ? (
-                                                            <img
-                                                                src={image}
-                                                                alt={getPlaceName(
-                                                                    place
-                                                                )}
-                                                                loading="lazy"
-                                                                className="
-                                                                    !h-full
-                                                                    !w-full
-                                                                    !object-cover
-                                                                "
-                                                                onError={(
-                                                                    event
-                                                                ) => {
-                                                                    event.currentTarget.onerror =
-                                                                        null;
-
-                                                                    event.currentTarget.src =
-                                                                        "/logo.png";
-
-                                                                    event.currentTarget.className =
-                                                                        `
-                                                                            !h-full
-                                                                            !w-full
-                                                                            !object-contain
-                                                                            !bg-[#edf7f5]
-                                                                            !p-5
-                                                                        `;
-                                                                }}
-                                                            />
-                                                        ) : (
-                                                            <div
-                                                                className="
-                                                                    !flex
-                                                                    !h-full
-                                                                    !w-full
-                                                                    !items-center
-                                                                    !justify-center
-                                                                    !bg-[#edf7f5]
-                                                                "
-                                                            >
-                                                                <img
-                                                                    src="/logo.png"
-                                                                    alt="Playas del Viento"
-                                                                    className="
-                                                                        !h-10
-                                                                        !w-10
-                                                                        !object-contain
-                                                                    "
-                                                                />
-                                                            </div>
-                                                        )}
-
-                                                        {/* GRADIENTE */}
+                                                        {/* =================================================
+                                                            IMAGEN
+                                                            MAPA EN MÓVIL = OCULTA
+                                                            CATÁLOGO = RESPONSIVE
+                                                        ================================================= */}
 
                                                         <div
-                                                            className="
-                                                                !pointer-events-none
-                                                                !absolute
-                                                                !inset-x-0
-                                                                !bottom-0
-                                                                !h-16
-                                                                !bg-gradient-to-t
-                                                                !from-black/50
-                                                                !via-black/10
-                                                                !to-transparent
-                                                            "
-                                                        />
-
-                                                        {/* CATEGORÍA */}
-
-                                                        <div
-                                                            className="
-                                                                !absolute
-                                                                !left-1.5
-                                                                !top-1.5
-                                                                !flex
-                                                                !max-w-[72%]
-                                                                !items-center
-                                                                !gap-1
+                                                            className={`
+                                                                !relative
+                                                                !w-full
                                                                 !overflow-hidden
-                                                                !rounded-sm
-                                                                !bg-white/95
-                                                                !px-1.5
-                                                                !py-1
-                                                                !text-[6px]
-                                                                !font-bold
-                                                                !uppercase
-                                                                !tracking-wide
-                                                                !text-[#285c3f]
-                                                                !shadow-sm
+                                                                !bg-[#edf7f5]
 
-                                                                sm:!px-2
-                                                                sm:!text-[7px]
-                                                            "
+                                                                ${
+                                                                    viewMode === "map"
+                                                                        ? `
+                                                                            !hidden
+
+                                                                            lg:!block
+                                                                            lg:!h-[92px]
+                                                                        `
+                                                                        : `
+                                                                            !aspect-[1.25/1]
+
+                                                                            sm:!aspect-[1.4/1]
+
+                                                                            lg:!aspect-[1.5/1]
+                                                                        `
+                                                                }
+                                                            `}
                                                         >
-                                                            <CategoryIcon
-                                                                category={getPlaceCategory(
-                                                                    place
-                                                                )}
-                                                            />
-
-                                                            <span className="!truncate">
-                                                                {getPlaceCategory(
-                                                                    place
-                                                                )}
-                                                            </span>
-                                                        </div>
-
-                                                        {/* FAVORITO */}
-
-                                                        <button
-                                                            type="button"
-                                                            onClick={(event) =>
-                                                                toggleFavorite(
-                                                                    event,
-                                                                    place
-                                                                )
-                                                            }
-                                                            className="
-                                                                !absolute
-                                                                !right-1.5
-                                                                !top-1.5
-                                                                !flex
-                                                                !h-7
-                                                                !w-7
-                                                                !items-center
-                                                                !justify-center
-                                                                !rounded-full
-                                                                !bg-white/95
-                                                                !text-slate-500
-                                                                !shadow-sm
-
-                                                                active:!bg-white
-                                                            "
-                                                            aria-label={
-                                                                favorite
-                                                                    ? "Quitar de favoritos"
-                                                                    : "Agregar a favoritos"
-                                                            }
-                                                        >
-                                                            {favorite ? (
-                                                                <FaHeart
+                                                            {image ? (
+                                                                <img
+                                                                    src={image}
+                                                                    alt={getPlaceName(place)}
+                                                                    loading="lazy"
                                                                     className="
-                                                                        !text-[12px]
-                                                                        !text-red-500
+                                                                        !block
+                                                                        !h-full
+                                                                        !w-full
+                                                                        !object-cover
                                                                     "
+                                                                    onError={(event) => {
+                                                                        event.currentTarget.onerror = null;
+
+                                                                        event.currentTarget.src =
+                                                                            "/logo.png";
+
+                                                                        event.currentTarget.className =
+                                                                            `
+                                                                                !block
+                                                                                !h-full
+                                                                                !w-full
+                                                                                !object-contain
+                                                                                !bg-[#edf7f5]
+                                                                                !p-4
+                                                                            `;
+                                                                    }}
                                                                 />
                                                             ) : (
-                                                                <FaRegHeart
+                                                                <div
                                                                     className="
-                                                                        !text-[12px]
+                                                                        !flex
+                                                                        !h-full
+                                                                        !w-full
+                                                                        !items-center
+                                                                        !justify-center
+                                                                        !bg-[#edf7f5]
                                                                     "
-                                                                />
+                                                                >
+                                                                    <img
+                                                                        src="/logo.png"
+                                                                        alt="Lugar turístico"
+                                                                        className="
+                                                                            !h-8
+                                                                            !w-8
+                                                                            !object-contain
+                                                                        "
+                                                                    />
+                                                                </div>
                                                             )}
-                                                        </button>
 
-                                                        {/* DISTANCIA */}
+                                                            {/* GRADIENTE */}
 
-                                                        {distance != null && (
+                                                            <div
+                                                                className="
+                                                                    !pointer-events-none
+                                                                    !absolute
+                                                                    !inset-x-0
+                                                                    !bottom-0
+                                                                    !h-12
+                                                                    !bg-gradient-to-t
+                                                                    !from-black/50
+                                                                    !via-black/10
+                                                                    !to-transparent
+                                                                "
+                                                            />
+
+                                                            {/* CATEGORÍA */}
+
                                                             <div
                                                                 className="
                                                                     !absolute
-                                                                    !bottom-1.5
-                                                                    !left-1.5
+                                                                    !left-1
+                                                                    !top-1
                                                                     !flex
+                                                                    !max-w-[72%]
                                                                     !items-center
-                                                                    !gap-1
+                                                                    !gap-0.5
+                                                                    !overflow-hidden
                                                                     !rounded-sm
-                                                                    !bg-black/55
-                                                                    !px-1.5
-                                                                    !py-1
-                                                                    !text-[7px]
+                                                                    !bg-white/95
+                                                                    !px-1
+                                                                    !py-0.5
+                                                                    !text-[5px]
                                                                     !font-bold
-                                                                    !text-white
-                                                                    !backdrop-blur-[2px]
+                                                                    !uppercase
+                                                                    !tracking-wide
+                                                                    !text-[#285c3f]
+                                                                    !shadow-sm
 
-                                                                    sm:!text-[8px]
+                                                                    sm:!left-1.5
+                                                                    sm:!top-1.5
+                                                                    sm:!gap-1
+                                                                    sm:!px-1.5
+                                                                    sm:!py-1
+                                                                    sm:!text-[6.5px]
                                                                 "
                                                             >
-                                                                <FaLocationArrow />
+                                                                <CategoryIcon
+                                                                    category={getPlaceCategory(place)}
+                                                                />
 
-                                                                {formatDistance(
-                                                                    distance
-                                                                )}
+                                                                <span className="!truncate">
+                                                                    {getPlaceCategory(place)}
+                                                                </span>
                                                             </div>
-                                                        )}
 
-                                                        {/* VISITADO */}
+                                                            {/* FAVORITO */}
 
-                                                        {visited && (
-                                                            <div
+                                                            <button
+                                                                type="button"
+                                                                onClick={(event) =>
+                                                                    toggleFavorite(
+                                                                        event,
+                                                                        place
+                                                                    )
+                                                                }
                                                                 className="
                                                                     !absolute
-                                                                    !bottom-1.5
-                                                                    !right-1.5
+                                                                    !right-1
+                                                                    !top-1
                                                                     !flex
                                                                     !h-5
                                                                     !w-5
                                                                     !items-center
                                                                     !justify-center
                                                                     !rounded-full
-                                                                    !bg-[#2d6b4f]
-                                                                    !text-white
+                                                                    !bg-white/95
+                                                                    !text-slate-500
                                                                     !shadow-sm
+
+                                                                    sm:!right-1.5
+                                                                    sm:!top-1.5
+                                                                    sm:!h-6
+                                                                    sm:!w-6
                                                                 "
-                                                                title="Lugar visitado"
+                                                                aria-label={
+                                                                    favorite
+                                                                        ? "Quitar de favoritos"
+                                                                        : "Agregar a favoritos"
+                                                                }
                                                             >
-                                                                <FaCheckCircle
+                                                                {favorite ? (
+                                                                    <FaHeart
+                                                                        className="
+                                                                            !text-[9px]
+                                                                            !text-red-500
+
+                                                                            sm:!text-[11px]
+                                                                        "
+                                                                    />
+                                                                ) : (
+                                                                    <FaRegHeart
+                                                                        className="
+                                                                            !text-[9px]
+
+                                                                            sm:!text-[11px]
+                                                                        "
+                                                                    />
+                                                                )}
+                                                            </button>
+
+                                                            {/* DISTANCIA */}
+
+                                                            {distance != null && (
+                                                                <div
                                                                     className="
-                                                                        !text-[10px]
+                                                                        !absolute
+                                                                        !bottom-1
+                                                                        !left-1
+                                                                        !hidden
+                                                                        !items-center
+                                                                        !gap-0.5
+                                                                        !rounded-sm
+                                                                        !bg-black/55
+                                                                        !px-1
+                                                                        !py-0.5
+                                                                        !text-[6px]
+                                                                        !font-bold
+                                                                        !text-white
+                                                                        !backdrop-blur-[2px]
+
+                                                                        sm:!flex
+                                                                        sm:!text-[7px]
                                                                     "
-                                                                />
-                                                            </div>
-                                                        )}
-                                                    </div>
+                                                                >
+                                                                    <FaLocationArrow />
 
-                                                    {/* =================================================
-                                                        CONTENIDO
-                                                    ================================================= */}
+                                                                    {formatDistance(distance)}
+                                                                </div>
+                                                            )}
 
-                                                    <div
-                                                        className="
-                                                            !flex
-                                                            !min-w-0
-                                                            !flex-col
-                                                            !p-1.5
+                                                            {/* VISITADO */}
 
-                                                            sm:!p-2
-                                                        "
-                                                    >
-                                                        {/* NOMBRE */}
+                                                            {visited && (
+                                                                <div
+                                                                    className="
+                                                                        !absolute
+                                                                        !bottom-1
+                                                                        !right-1
+                                                                        !flex
+                                                                        !h-4
+                                                                        !w-4
+                                                                        !items-center
+                                                                        !justify-center
+                                                                        !rounded-full
+                                                                        !bg-[#2d6b4f]
+                                                                        !text-white
+                                                                        !shadow-sm
+
+                                                                        sm:!h-5
+                                                                        sm:!w-5
+                                                                    "
+                                                                    title="Lugar visitado"
+                                                                >
+                                                                    <FaCheckCircle
+                                                                        className="
+                                                                            !text-[8px]
+
+                                                                            sm:!text-[9px]
+                                                                        "
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {/* =================================================
+                                                            CONTENIDO
+                                                        ================================================= */}
 
                                                         <div
-                                                            className="
+                                                            className={`
                                                                 !flex
                                                                 !min-w-0
-                                                                !items-start
-                                                                !gap-1
-                                                            "
+                                                                !flex-1
+                                                                !flex-col
+
+                                                                ${
+                                                                    viewMode === "map"
+                                                                        ? `
+                                                                            !justify-center
+                                                                            !p-0
+
+                                                                            lg:!justify-start
+                                                                            lg:!p-1.5
+                                                                        `
+                                                                        : `
+                                                                            !p-1
+
+                                                                            sm:!p-1.5
+
+                                                                            lg:!p-1.5
+                                                                        `
+                                                                }
+                                                            `}
                                                         >
-                                                            <h3
+                                                            {/* NOMBRE */}
+
+                                                            <div
+                                                                className="
+                                                                    !flex
+                                                                    !min-w-0
+                                                                    !items-center
+                                                                    !gap-0.5
+                                                                "
+                                                            >
+                                                                <h3
+                                                                    className={`
+                                                                        !m-0
+                                                                        !min-w-0
+                                                                        !flex-1
+                                                                        !font-bold
+                                                                        !leading-[1.15]
+                                                                        !text-slate-800
+
+                                                                        ${
+                                                                            viewMode === "map"
+                                                                                ? `
+                                                                                    !line-clamp-2
+                                                                                    !text-[8px]
+
+                                                                                    sm:!text-[9px]
+
+                                                                                    lg:!text-[10px]
+                                                                                `
+                                                                                : `
+                                                                                    !line-clamp-2
+                                                                                    !text-[8px]
+
+                                                                                    sm:!text-[10px]
+
+                                                                                    md:!text-[11px]
+                                                                                `
+                                                                        }
+                                                                    `}
+                                                                >
+                                                                    {getPlaceName(place)}
+                                                                </h3>
+
+                                                                {/* FAVORITO MÓVIL + MAPA */}
+
+                                                                {viewMode === "map" && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={(event) => {
+                                                                            event.stopPropagation();
+
+                                                                            toggleFavorite(
+                                                                                event,
+                                                                                place
+                                                                            );
+                                                                        }}
+                                                                        className="
+                                                                            !flex
+                                                                            !h-5
+                                                                            !w-5
+                                                                            !shrink-0
+                                                                            !items-center
+                                                                            !justify-center
+                                                                            !rounded-full
+                                                                            !bg-slate-50
+                                                                            !text-slate-400
+
+                                                                            sm:!h-5
+                                                                            sm:!w-5
+
+                                                                            lg:!hidden
+                                                                        "
+                                                                        aria-label={
+                                                                            favorite
+                                                                                ? "Quitar de favoritos"
+                                                                                : "Agregar a favoritos"
+                                                                        }
+                                                                    >
+                                                                        {favorite ? (
+                                                                            <FaHeart
+                                                                                className="
+                                                                                    !text-[7px]
+                                                                                    !text-red-500
+                                                                                "
+                                                                            />
+                                                                        ) : (
+                                                                            <FaRegHeart
+                                                                                className="
+                                                                                    !text-[7px]
+                                                                                "
+                                                                            />
+                                                                        )}
+                                                                    </button>
+                                                                )}
+                                                            </div>
+
+                                                            {/* DESCRIPCIÓN */}
+
+                                                            <p
                                                                 className={`
                                                                     !m-0
-                                                                    !min-w-0
-                                                                    !flex-1
-                                                                    !line-clamp-2
-                                                                    !font-bold
-                                                                    !leading-[1.2]
-                                                                    !text-slate-800
+                                                                    !mt-0.5
+                                                                    !line-clamp-1
+                                                                    !text-[8.5px]
+                                                                    !leading-[1.3]
+                                                                    !text-slate-500
+
+                                                                    sm:!mt-1
+                                                                    sm:!text-[10px]
+                                                                    sm:!line-clamp-2
 
                                                                     ${
-                                                                        viewMode ===
-                                                                        "map"
-                                                                            ? "!text-[11px]"
-                                                                            : "!text-[10px] sm:!text-[12px]"
+                                                                        viewMode === "map"
+                                                                            ? `
+                                                                                !hidden
+
+                                                                                lg:!block
+                                                                                lg:!text-[9px]
+                                                                            `
+                                                                            : ""
                                                                     }
                                                                 `}
                                                             >
-                                                                {getPlaceName(
-                                                                    place
-                                                                )}
-                                                            </h3>
-                                                        </div>
+                                                                {place.shortDescription ||
+                                                                    getPlaceDescription(place)}
+                                                            </p>
 
-                                                        {/* DESCRIPCIÓN */}
+                                                            {/* =================================================
+                                                                ACCIONES
+                                                            ================================================= */}
 
-                                                        <p
-                                                            className="
-                                                                !m-0
-                                                                !mt-1
-                                                                !line-clamp-1
-                                                                !text-[7px]
-                                                                !leading-[1.35]
-                                                                !text-slate-500
+                                                            <div
+                                                                className={`
+                                                                    !flex
+                                                                    !w-full
+                                                                    !items-center
+                                                                    !justify-center
 
-                                                                sm:!text-[9px]
-                                                                sm:!line-clamp-2
-                                                            "
-                                                        >
-                                                            {getPlaceDescription(
-                                                                place
-                                                            )}
-                                                        </p>
+                                                                    ${
+                                                                        viewMode === "map"
+                                                                            ? `
+                                                                                !mt-0.5
 
-                                                        {/* INFORMACIÓN COMPACTA */}
+                                                                                lg:!mt-1
+                                                                            `
+                                                                            : `
+                                                                                !mt-1
+                                                                            `
+                                                                    }
+                                                                `}
+                                                            >
+                                                                {/* CONTENEDOR DEL BOTÓN RUTA */}
 
-                                                        <div
-                                                            className="
-                                                                !mt-1.5
-                                                                !flex
-                                                                !min-h-[14px]
-                                                                !items-center
-                                                                !gap-2
-                                                                !overflow-hidden
-                                                            "
-                                                        >
-                                                            {place.recommendedMinutes && (
-                                                                <span
+                                                                <div
                                                                     className="
                                                                         !flex
-                                                                        !shrink-0
+                                                                        !w-full
                                                                         !items-center
-                                                                        !gap-1
-                                                                        !text-[7px]
-                                                                        !font-semibold
-                                                                        !text-slate-500
-
-                                                                        sm:!text-[9px]
+                                                                        !justify-center
                                                                     "
                                                                 >
-                                                                    <FaClock />
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={(event) => {
+                                                                            event.stopPropagation();
 
-                                                                    {
-                                                                        place.recommendedMinutes
-                                                                    }{" "}
-                                                                    min
-                                                                </span>
-                                                            )}
+                                                                            startRoute(place);
+                                                                        }}
+                                                                        className={`
+                                                                            !flex
+                                                                            !w-auto
+                                                                            !shrink-0
+                                                                            !items-center
+                                                                            !justify-center
+                                                                            !gap-0.5
+                                                                            !rounded-sm
+                                                                            !bg-[#2aa7b0]
+                                                                            !px-2
+                                                                            !font-bold
+                                                                            !text-white
+                                                                            !transition-colors
 
-                                                            <span
-                                                                className="
-                                                                    !flex
-                                                                    !min-w-0
-                                                                    !items-center
-                                                                    !gap-1
-                                                                    !truncate
-                                                                    !text-[7px]
-                                                                    !font-medium
-                                                                    !text-[#168795]
+                                                                            hover:!bg-[#168795]
+                                                                            active:!bg-[#168795]
 
-                                                                    sm:!text-[9px]
-                                                                "
-                                                            >
-                                                                <FaMapMarkerAlt />
+                                                                            ${
+                                                                                viewMode === "map"
+                                                                                    ? `
+                                                                                        !min-h-[18px]
+                                                                                        !text-[7.5px]
 
-                                                                <span className="!truncate">
-                                                                    Destino turístico
-                                                                </span>
-                                                            </span>
-                                                        </div>
+                                                                                        sm:!min-h-[20px]
+                                                                                        sm:!px-2
+                                                                                        sm:!text-[8.5px]
 
-                                                        {/* ACCIONES */}
+                                                                                        lg:!min-h-[25px]
+                                                                                        lg:!px-2.5
+                                                                                        lg:!text-[11px]
+                                                                                    `
+                                                                                    : `
+                                                                                        !min-h-[22px]
+                                                                                        !text-[7.5px]
 
-                                                        <div
-                                                            className="
-                                                                !mt-1.5
-                                                                !flex
-                                                                !items-center
-                                                                !gap-1
-                                                            "
-                                                        >
-                                                            <button
-                                                                type="button"
-                                                                onClick={(event) => {
-                                                                    event.stopPropagation();
+                                                                                        sm:!min-h-[25px]
+                                                                                        sm:!px-2
+                                                                                        sm:!text-[8.5px]
 
-                                                                    startRoute(
-                                                                        place
-                                                                    );
-                                                                }}
-                                                                className="
-                                                                    !flex
-                                                                    !min-h-[26px]
-                                                                    !min-w-0
-                                                                    !flex-1
-                                                                    !items-center
-                                                                    !justify-center
-                                                                    !gap-1
-                                                                    !rounded-sm
-                                                                    !bg-[#2aa7b0]
-                                                                    !px-1.5
-                                                                    !text-[7px]
-                                                                    !font-bold
-                                                                    !text-white
+                                                                                        lg:!min-h-[26px]
+                                                                                        lg:!px-2.5
+                                                                                        lg:!text-[11px]
+                                                                                    `
+                                                                            }
+                                                                        `}
+                                                                    >
+                                                                        <FaRoute />
 
-                                                                    active:!bg-[#168795]
+                                                                        <span>
+                                                                            Ruta
+                                                                        </span>
+                                                                    </button>
 
-                                                                    sm:!min-h-[28px]
-                                                                    sm:!text-[9px]
+                                                                    {/* DETALLE */}
 
-                                                                    lg:!text-[11px]
-                                                                "
-                                                            >
-                                                                <FaRoute />
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={(event) => {
+                                                                            event.stopPropagation();
 
-                                                                <span className="!truncate">
-                                                                    Ruta
-                                                                </span>
-                                                            </button>
+                                                                            openPlace(place);
+                                                                        }}
+                                                                        className={`
+                                                                            !ml-1
+                                                                            !flex
+                                                                            !shrink-0
+                                                                            !items-center
+                                                                            !justify-center
+                                                                            !rounded-sm
+                                                                            !border
+                                                                            !border-slate-200
+                                                                            !bg-white
+                                                                            !text-slate-500
+                                                                            !transition-colors
 
-                                                            <button
-                                                                type="button"
-                                                                onClick={(event) => {
-                                                                    event.stopPropagation();
+                                                                            hover:!border-[#2aa7b0]
+                                                                            hover:!text-[#168795]
 
-                                                                    openPlace(
-                                                                        place
-                                                                    );
-                                                                }}
-                                                                className="
-                                                                    !flex
-                                                                    !h-[26px]
-                                                                    !w-[26px]
-                                                                    !shrink-0
-                                                                    !items-center
-                                                                    !justify-center
-                                                                    !rounded-sm
-                                                                    !border
-                                                                    !border-slate-200
-                                                                    !bg-white
-                                                                    !text-slate-500
+                                                                            ${
+                                                                                viewMode === "map"
+                                                                                    ? `
+                                                                                        !h-[18px]
+                                                                                        !w-[18px]
 
-                                                                    active:!border-[#2aa7b0]
-                                                                    active:!text-[#168795]
+                                                                                        sm:!h-5
+                                                                                        sm:!w-5
 
-                                                                    sm:!h-[28px]
-                                                                    sm:!w-[28px]
-                                                                "
-                                                                title="Ver detalle"
-                                                                aria-label="Ver detalle"
-                                                            >
-                                                                <FaChevronRight
-                                                                    className="
-                                                                        !text-[9px]
-                                                                        sm:!text-[10px]
-                                                                    "
-                                                                />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </article>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
+                                                                                        lg:!h-[25px]
+                                                                                        lg:!w-[25px]
+                                                                                    `
+                                                                                    : `
+                                                                                        !h-[22px]
+                                                                                        !w-[22px]
 
-                            {/* =================================================
-                                RUTAS — DEBAJO DE LOS LUGARES
-                            ================================================= */}
+                                                                                        sm:!h-[25px]
+                                                                                        sm:!w-[25px]
+                                                                                    `
+                                                                            }
+                                                                        `}
+                                                                        title="Ver detalle"
+                                                                        aria-label="Ver detalle"
+                                                                    >
+                                                                        <FaChevronRight
+                                                                            className={`
+                                                                                ${
+                                                                                    viewMode === "map"
+                                                                                        ? `
+                                                                                            !text-[8.5px]
 
-                            <div
-                                className="
-                                    !shrink-0
-                                    !border-t
-                                    !border-slate-100
-                                "
-                            >
-                                <div
-                                    className="
-                                        !flex
-                                        !items-center
-                                        !justify-between
-                                        !gap-2
-                                        !px-2.5
-                                        !py-2
-                                    "
-                                >
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            setShowRoutes(
-                                                (current) =>
-                                                    !current
-                                            )
-                                        }
-                                        className="
-                                            !flex
-                                            !min-w-0
-                                            !flex-1
-                                            !items-center
-                                            !gap-1.5
-                                            !text-left
-                                        "
-                                    >
-                                        <div
-                                            className="
-                                                !flex
-                                                !h-7
-                                                !w-7
-                                                !shrink-0
-                                                !items-center
-                                                !justify-center
-                                                !rounded-sm
-                                                !bg-[#edf8f6]
-                                                !text-[#168795]
-                                            "
-                                        >
-                                            <FaRoute className="!text-[12px]" />
-                                        </div>
+                                                                                            sm:!text-[11px]
 
-                                        <div className="!min-w-0">
-                                            <p
-                                                className="
-                                                    !m-0
-                                                    !truncate
-                                                    !text-[9px]
-                                                    !font-bold
-                                                    !text-slate-700
+                                                                                            lg:!text-[11px]
+                                                                                        `
+                                                                                        : `
+                                                                                            !text-[8.5px]
 
-                                                    lg:!text-[11px]
-                                                "
-                                            >
-                                                Rutas turísticas
-                                            </p>
-
-                                            <p
-                                                className="
-                                                    !m-0
-                                                    !mt-0.5
-                                                    !text-[9px]
-                                                    !text-slate-400
-                                                "
-                                            >
-                                                {touristRoutes.length} rutas disponibles
-                                            </p>
-                                        </div>
-
-                                        <span
-                                            className="
-                                                !ml-auto
-                                                !text-[13px]
-                                                !font-bold
-                                                !text-slate-800
-                                            "
-                                            title={
-                                                showRoutes
-                                                ? "Ocultar rutas"
-                                                : "Ver rutas"
-                                            }
-                                        >
-                                            {showRoutes
-                                                ? <FaMinus />
-                                                : <FaPlus /> 
-                                            }
-                                        </span>
-                                    </button>
-
-                                </div>
-
-                                {showRoutes && (
-                                    <div
-                                        className="
-                                            !max-h-[190px]
-                                            !space-y-1
-                                            !overflow-y-auto
-                                            !border-t
-                                            !border-slate-100
-                                            !p-1.5
-                                        "
-                                    >
-                                        {touristRoutes.length ===
-                                            0 ? (
-                                            <div
-                                                className="
-                                                    !rounded-sm
-                                                    !bg-slate-50
-                                                    !px-3
-                                                    !py-3
-                                                    !text-center
-                                                    !text-[10px]
-                                                    !text-slate-400
-                                                "
-                                            >
-                                                No hay rutas turísticas
-                                                disponibles.
-                                            </div>
-                                        ) : (
-                                            touristRoutes.map(
-                                                (route) => {
-                                                    const id =
-                                                        getRouteId(
-                                                            route
-                                                        );
-
-                                                    const saved =
-                                                        savedRoutes.includes(
-                                                            id
-                                                        );
-
-                                                    const selected =
-                                                        getRouteId(
-                                                            activeRoute
-                                                        ) === id;
-
-                                                    return (
-                                                        <button
-                                                            key={id}
-                                                            type="button"
-                                                            onClick={() =>
-                                                                openRoute(
-                                                                    route
-                                                                )
-                                                            }
-                                                            className={`
-                                                                !flex
-                                                                !w-full
-                                                                !items-center
-                                                                !gap-1.5
-                                                                !rounded-sm
-                                                                !border
-                                                                !px-2
-                                                                !py-1.5
-                                                                !text-left
-                                                                !transition-all
-
-                                                                ${selected
-                                                                    ? "!border-[#2aa7b0] !bg-[#f2faf9]"
-                                                                    : "!border-slate-200 !bg-white hover:!border-[#b8d9d5]"
-                                                                }
-                                                            `} 
-                                                        >
-                                                            <div
-                                                                className="
-                                                                !flex
-                                                                !h-7
-                                                                !w-7
-                                                                !shrink-0
-                                                                !items-center
-                                                                !justify-center
-                                                                !rounded-sm
-                                                                !bg-[#edf8f6]
-                                                                !text-[#168795]
-                                                            "
-                                                            >
-                                                                <FaRoute className="!text-[9px]" />
+                                                                                            sm:!text-[11px]
+                                                                                        `
+                                                                                }
+                                                                            `}
+                                                                        />
+                                                                    </button>
+                                                                </div>
                                                             </div>
-
-                                                            <div className="!min-w-0 !flex-1">
-                                                                <p
-                                                                    className="
-                                                                        !m-0
-                                                                        !truncate
-                                                                        !text-[8px]
-                                                                        !font-bold
-                                                                        !text-slate-700
-
-                                                                        lg:!text-[11px]
-                                                                    "
-                                                                >
-                                                                    {
-                                                                        route.name
-                                                                    }
-                                                                </p>
-
-                                                                <p
-                                                                    className="
-                                                                        !m-0
-                                                                        !mt-0.5
-                                                                        !truncate
-                                                                        !text-[7px]
-                                                                        !text-slate-400
-                                                                    "
-                                                                >
-                                                                    {route.distanceKm ??
-                                                                        route.distance ??
-                                                                        "-"}{" "}
-                                                                    km ·{" "}
-                                                                    {route.duration ??
-                                                                        "Ruta turística"}
-                                                                </p>
-                                                            </div>
-
-                                                            {saved && (
-                                                                <FaCheckCircle
-                                                                    className="
-                                                                        !shrink-0
-                                                                        !text-[9px]
-                                                                        !text-[#2d6b4f]
-                                                                    "
-                                                                />
-                                                            )}
-                                                        </button>
-                                                    );
-                                                }
-                                            )
-                                        )}
+                                                        </div>
+                                                    </article>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -3670,16 +3626,19 @@ export default function Home() {
                             !min-w-0
                             !overflow-hidden
 
-                            ${viewMode === "map"
-                                ? "!opacity-100"
-                                : "!pointer-events-none !hidden lg:!hidden"
+                            ${
+                                viewMode === "map"
+                                    ? "!block !opacity-100"
+                                    : "!hidden lg:!hidden"
                             }
                         `}
                     >
                         <div
                             className="
                                 !relative
-                                !h-[420px]
+                                !h-[330px]
+                                !min-h-[330px]
+                                !max-h-[330px]
                                 !w-full
                                 !overflow-hidden
                                 !rounded-md
@@ -3687,8 +3646,13 @@ export default function Home() {
                                 !border-slate-200
                                 !bg-[#dbeef1]
 
-                                sm:!h-[500px]
-                                md:!h-[600px]
+                                sm:!h-[390px]
+                                sm:!min-h-[390px]
+                                sm:!max-h-[390px]
+
+                                md:!h-[450px]
+                                md:!min-h-[450px]
+                                md:!max-h-[450px]
 
                                 lg:!h-[calc(100vh-175px)]
                                 lg:!min-h-[560px]
@@ -3734,21 +3698,20 @@ export default function Home() {
                                     POLYLINE
                                 ================================================= */}
 
-                                {activeRouteCoordinates.length >
-                                    1 && (
-                                        <Polyline
-                                            positions={
-                                                activeRouteCoordinates
-                                            }
-                                            pathOptions={{
-                                                color:
-                                                    activeRoute?.color ??
-                                                    "#2aa7b0",
-                                                weight: 5,
-                                                opacity: 0.85,
-                                            }}
-                                        />
-                                    )}
+                                {activeRouteCoordinates.length > 1 && (
+                                    <Polyline
+                                        positions={
+                                            activeRouteCoordinates
+                                        }
+                                        pathOptions={{
+                                            color:
+                                                activeRoute?.color ??
+                                                "#2aa7b0",
+                                            weight: 5,
+                                            opacity: 0.85,
+                                        }}
+                                    />
+                                )}
 
                                 {/* =================================================
                                     MARCADORES TURÍSTICOS
@@ -3756,25 +3719,19 @@ export default function Home() {
 
                                 {touristPlaces.map((place) => {
                                     const coordinates =
-                                        getPlaceCoordinates(
-                                            place
-                                        );
+                                        getPlaceCoordinates(place);
 
                                     if (!coordinates) {
                                         return null;
                                     }
 
                                     const selected =
-                                        getPlaceId(
-                                            selectedPlace
-                                        ) ===
+                                        getPlaceId(selectedPlace) ===
                                         getPlaceId(place);
 
                                     return (
                                         <CircleMarker
-                                            key={getPlaceId(
-                                                place
-                                            )}
+                                            key={getPlaceId(place)}
                                             center={coordinates}
                                             radius={
                                                 selected ? 11 : 7
@@ -3787,14 +3744,10 @@ export default function Home() {
                                                         : "#2d6b4f",
                                                 fillOpacity: 0.95,
                                                 weight:
-                                                    selected
-                                                        ? 3
-                                                        : 2,
+                                                    selected ? 3 : 2,
                                             }}
                                             eventHandlers={{
-                                                mouseover: (
-                                                    event
-                                                ) => {
+                                                mouseover: (event) => {
                                                     event.target.openPopup();
                                                 },
 
@@ -3866,9 +3819,7 @@ export default function Home() {
                                                             !text-slate-800
                                                         "
                                                     >
-                                                        {getPlaceName(
-                                                            place
-                                                        )}
+                                                        {getPlaceName(place)}
                                                     </strong>
 
                                                     <p
@@ -3876,7 +3827,7 @@ export default function Home() {
                                                             !m-0
                                                             !mt-1
                                                             !line-clamp-2
-                                                            !text-[8px]
+                                                            !text-[9px]
                                                             !leading-relaxed
                                                             !text-slate-500
                                                         "
@@ -3892,7 +3843,7 @@ export default function Home() {
                                                             !flex
                                                             !items-center
                                                             !gap-1
-                                                            !text-[7px]
+                                                            !text-[8px]
                                                             !font-semibold
                                                             !text-[#168795]
                                                         "
@@ -3960,13 +3911,11 @@ export default function Home() {
                                                 userLocation.lng,
                                             ]}
                                             radius={
-                                                userLocation.accuracy ??
-                                                30
+                                                userLocation.accuracy ?? 30
                                             }
                                             pathOptions={{
                                                 color: "#168795",
-                                                fillColor:
-                                                    "#2aa7b0",
+                                                fillColor: "#2aa7b0",
                                                 fillOpacity: 0.1,
                                                 weight: 1,
                                             }}
@@ -3980,8 +3929,7 @@ export default function Home() {
                                             radius={8}
                                             pathOptions={{
                                                 color: "#ffffff",
-                                                fillColor:
-                                                    "#168795",
+                                                fillColor: "#168795",
                                                 fillOpacity: 1,
                                                 weight: 3,
                                             }}
@@ -4002,8 +3950,8 @@ export default function Home() {
                                 className="
                                     !pointer-events-none
                                     !absolute
-                                    !left-2
-                                    !top-2
+                                    !left-1
+                                    !top-1
                                     !z-[500]
                                     !flex
                                     !items-center
@@ -4012,12 +3960,18 @@ export default function Home() {
                                     !border
                                     !border-white/80
                                     !bg-white/95
-                                    !px-2
+                                    !px-1.5
                                     !py-1
-                                    !text-[10px]
+                                    !text-[7px]
                                     !font-bold
                                     !text-slate-600
                                     !shadow-sm
+
+                                    sm:!left-2
+                                    sm:!top-2
+                                    sm:!text-[9px]
+
+                                    lg:!text-[10px]
                                 "
                             >
                                 <span
@@ -4026,10 +3980,10 @@ export default function Home() {
                                         !w-1.5
                                         !rounded-sm
 
-                                        ${locationStatus ===
-                                            "active"
-                                            ? "!bg-emerald-500"
-                                            : "!bg-slate-400"
+                                        ${
+                                            locationStatus === "active"
+                                                ? "!bg-emerald-500"
+                                                : "!bg-slate-400"
                                         }
                                     `}
                                 />
@@ -4045,17 +3999,15 @@ export default function Home() {
 
                             <button
                                 type="button"
-                                onClick={
-                                    activateGeolocation
-                                }
+                                onClick={activateGeolocation}
                                 className="
                                     !absolute
-                                    !right-2
-                                    !top-2
+                                    !right-1
+                                    !top-1
                                     !z-[500]
                                     !flex
-                                    !h-8
-                                    !w-8
+                                    !h-7
+                                    !w-7
                                     !items-center
                                     !justify-center
                                     !rounded-sm
@@ -4069,13 +4021,18 @@ export default function Home() {
                                     hover:!scale-105
                                     hover:!bg-[#edf8f6]
 
-                                    sm:!h-9
-                                    sm:!w-9
+                                    sm:!right-2
+                                    sm:!top-2
+                                    sm:!h-8
+                                    sm:!w-8
+
+                                    lg:!h-9
+                                    lg:!w-9
                                 "
                                 title="Mi ubicación"
                                 aria-label="Mi ubicación"
                             >
-                                <FaLocationArrow className="!text-[10px]" />
+                                <FaLocationArrow className="!text-[9px] sm:!text-[10px]" />
                             </button>
 
                             {/* =================================================
@@ -4085,19 +4042,24 @@ export default function Home() {
                             <div
                                 className="
                                     !absolute
-                                    !bottom-2
-                                    !left-2
+                                    !bottom-1
+                                    !left-1
                                     !z-[500]
                                     !rounded-sm
                                     !border
                                     !border-white
                                     !bg-white/95
-                                    !px-2
+                                    !px-1.5
                                     !py-1
-                                    !text-[7px]
+                                    !text-[6px]
                                     !font-semibold
                                     !text-slate-500
                                     !shadow-sm
+
+                                    sm:!bottom-2
+                                    sm:!left-2
+                                    sm:!px-2
+                                    sm:!text-[8px]
 
                                     lg:!text-[11px]
                                 "
@@ -4109,170 +4071,443 @@ export default function Home() {
                                 RUTA ACTIVA
                             ================================================= */}
 
-                            {activeRouteCoordinates.length >
-                                1 && (
-                                    <div
-                                        className="
-                                            !absolute
-                                            !bottom-2
-                                            !right-2
-                                            !z-[500]
-                                            !flex
-                                            !items-center
-                                            !gap-1
-                                            !rounded-sm
-                                            !bg-[#168795]
-                                            !px-2
-                                            !py-1
-                                            !text-[7px]
-                                            !font-bold
-                                            !text-white
-                                            !shadow-sm
-
-                                            lg:!text-[11px]
-                                        "
-                                    >
-                                        <FaRoute />
-
-                                        Ruta activa
-                                    </div>
-                                )}
-                        </div>
-
-                        {/* =================================================
-                            ACCIONES RÁPIDAS
-                        ================================================= */}
-
-                        <div
-                            className="
-                                !mt-1.5
-                                !grid
-                                !grid-cols-3
-                                !gap-1
-                            "
-                        >
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    if (selectedPlace) {
-                                        openDirections(
-                                            selectedPlace
-                                        );
-                                    }
-                                }}
-                                className="
-                                    !flex
-                                    !min-w-0
-                                    !items-center
-                                    !justify-center
-                                    !gap-1
-                                    !rounded-sm
-                                    !border
-                                    !border-slate-200
-                                    !bg-white
-                                    !px-2
-                                    !py-2
-                                    !text-[#168795]
-                                    !transition-all
-
-                                    hover:!border-[#2aa7b0]
-                                    hover:!bg-[#f5fbfa]
-                                "
-                            >
-                                <FaRoute className="!shrink-0 !text-[9px]" />
-
-                                <span
+                            {activeRouteCoordinates.length > 1 && (
+                                <div
                                     className="
-                                        !truncate
-                                        !text-[7px]
+                                        !absolute
+                                        !bottom-1
+                                        !right-1
+                                        !z-[500]
+                                        !flex
+                                        !items-center
+                                        !gap-1
+                                        !rounded-sm
+                                        !bg-[#168795]
+                                        !px-1.5
+                                        !py-1
+                                        !text-[6px]
                                         !font-bold
-                                        !text-slate-600
+                                        !text-white
+                                        !shadow-sm
 
+                                        sm:!bottom-2
+                                        sm:!right-2
+                                        sm:!px-2
                                         sm:!text-[8px]
+
                                         lg:!text-[11px]
                                     "
                                 >
-                                    Cómo llegar
-                                </span>
-                            </button>
+                                    <FaRoute />
 
-                            <div
-                                className="
-                                    !flex
-                                    !min-w-0
-                                    !items-center
-                                    !justify-center
-                                    !gap-1
-                                    !rounded-sm
-                                    !border
-                                    !border-slate-200
-                                    !bg-white
-                                    !px-2
-                                    !py-2
-                                "
-                            >
-                                <FaWater
-                                    className="
-                                        !shrink-0
-                                        !text-[9px]
-                                        !text-[#168795]
-                                    "
-                                />
-
-                                <span
-                                    className="
-                                        !truncate
-                                        !text-[7px]
-                                        !font-semibold
-                                        !text-slate-500
-
-                                        sm:!text-[8px]
-                                        lg:!text-[11px]
-                                    "
-                                >
-                                    Estado del mar
-                                </span>
-                            </div>
-
-                            <div
-                                className="
-                                    !flex
-                                    !min-w-0
-                                    !items-center
-                                    !justify-center
-                                    !gap-1
-                                    !rounded-sm
-                                    !border
-                                    !border-slate-200
-                                    !bg-white
-                                    !px-2
-                                    !py-2
-                                "
-                            >
-                                <FaInfoCircle
-                                    className="
-                                        !shrink-0
-                                        !text-[9px]
-                                        !text-[#2d6b4f]
-                                    "
-                                />
-
-                                <span
-                                    className="
-                                        !truncate
-                                        !text-[7px]
-                                        !font-semibold
-                                        !text-slate-500
-
-                                        sm:!text-[8px]
-                                        lg:!text-[11px]
-                                    "
-                                >
-                                    Atención turística
-                                </span>
-                            </div>
+                                    Ruta activa
+                                </div>
+                            )}
                         </div>
                     </section>
+                </div>
+
+            </section>
+
+            {/* =========================================================
+                SECCIÓN INFORMATIVA
+            ========================================================= */}
+            <section
+                className="
+                    !w-full
+                    !mt-5
+                    !border-t
+                    !border-slate-200
+                    !bg-white
+                    !px-2
+                    !py-5
+
+                    sm:!mt-6
+                    sm:!px-4
+                    sm:!py-6
+
+                    md:!px-6
+                    md:!py-7
+
+                    lg:!px-8
+                "
+            >
+                <div
+                    className="
+                        !mx-auto
+                        !w-full
+                        !max-w-[1400px]
+                    "
+                >
+                    {/* Encabezado */}
+                    <div
+                        className="
+                            !mb-4
+                            !text-center
+
+                            sm:!mb-5
+                        "
+                    >
+                        <span
+                            className="
+                                !inline-flex
+                                !items-center
+                                !rounded-sm
+                                !border
+                                !border-[#d8eeeb]
+                                !bg-[#eef8f7]
+                                !px-2
+                                !py-0.5
+                                !text-[8px]
+                                !font-bold
+                                !uppercase
+                                !tracking-wide
+                                !text-[#16877d]
+                            "
+                        >
+                            Turismo local
+                        </span>
+
+                        <h2
+                            className="
+                                !mt-1.5
+                                !text-base
+                                !font-bold
+                                !leading-tight
+                                !tracking-tight
+                                !text-slate-900
+
+                                sm:!text-lg
+
+                                md:!text-xl
+                            "
+                        >
+                            Descubre San Bernardo del Viento
+                        </h2>
+
+                        <p
+                            className="
+                                !mx-auto
+                                !mt-1
+                                !max-w-2xl
+                                !text-[9px]
+                                !leading-relaxed
+                                !text-slate-500
+
+                                sm:!text-[10px]
+
+                                md:!text-[11px]
+                            "
+                        >
+                            Explora playas, ríos, manglares, islas y lugares naturales
+                            del Caribe colombiano.
+                        </p>
+                    </div>
+
+                    {/* =====================================================
+                        INFORMACIÓN
+                        En móvil: una sola fila horizontal con scroll
+                    ===================================================== */}
+                    <div
+                        className="
+                            !flex
+                            !w-full
+                            !gap-1.5
+                            !overflow-x-auto
+                            !overflow-y-hidden
+                            !overscroll-x-contain
+                            !pb-1
+
+                            sm:!grid
+                            sm:!grid-cols-4
+                            sm:!gap-2
+                            sm:!overflow-visible
+
+                            md:!gap-2.5
+                        "
+                    >
+                        {/* Playas */}
+                        <div
+                            className="
+                                !min-w-[210px]
+                                !shrink-0
+                                !border
+                                !border-slate-100
+                                !bg-[#f8fbfb]
+                                !p-2.5
+
+                                sm:!min-w-0
+                                sm:!shrink
+                                sm:!p-3
+
+                                md:!p-3.5
+                            "
+                        >
+                            <div
+                                className="
+                                    !mb-2
+                                    !flex
+                                    !h-7
+                                    !w-7
+                                    !items-center
+                                    !justify-center
+                                    !rounded-sm
+                                    !bg-[#e5f5f3]
+                                    !text-[#16877d]
+                                "
+                            >
+                                <FaLocationArrow className="!text-[11px]" />
+                            </div>
+
+                            <h3
+                                className="
+                                    !text-[11px]
+                                    !font-bold
+                                    !leading-tight
+                                    !text-slate-800
+
+                                    sm:!text-xs
+                                "
+                            >
+                                Playas y naturaleza
+                            </h3>
+
+                            <p
+                                className="
+                                    !mt-1
+                                    !text-[9px]
+                                    !leading-snug
+                                    !text-slate-500
+                                "
+                            >
+                                Conoce playas y espacios naturales para caminar,
+                                descansar y disfrutar del paisaje.
+                            </p>
+                        </div>
+
+                        {/* Experiencias */}
+                        <div
+                            className="
+                                !min-w-[210px]
+                                !shrink-0
+                                !border
+                                !border-slate-100
+                                !bg-[#f8fbfb]
+                                !p-2.5
+
+                                sm:!min-w-0
+                                sm:!shrink
+                                sm:!p-3
+
+                                md:!p-3.5
+                            "
+                        >
+                            <div
+                                className="
+                                    !mb-2
+                                    !flex
+                                    !h-7
+                                    !w-7
+                                    !items-center
+                                    !justify-center
+                                    !rounded-sm
+                                    !bg-[#e5f5f3]
+                                    !text-[#16877d]
+                                "
+                            >
+                                <FaCheckCircle className="!text-[11px]" />
+                            </div>
+
+                            <h3
+                                className="
+                                    !text-[11px]
+                                    !font-bold
+                                    !leading-tight
+                                    !text-slate-800
+
+                                    sm:!text-xs
+                                "
+                            >
+                                Experiencias locales
+                            </h3>
+
+                            <p
+                                className="
+                                    !mt-1
+                                    !text-[9px]
+                                    !leading-snug
+                                    !text-slate-500
+                                "
+                            >
+                                Descubre lugares y actividades para conocer mejor
+                                la cultura y el entorno del municipio.
+                            </p>
+                        </div>
+
+                        {/* Rutas */}
+                        <div
+                            className="
+                                !min-w-[210px]
+                                !shrink-0
+                                !border
+                                !border-slate-100
+                                !bg-[#f8fbfb]
+                                !p-2.5
+
+                                sm:!min-w-0
+                                sm:!shrink
+                                sm:!p-3
+
+                                md:!p-3.5
+                            "
+                        >
+                            <div
+                                className="
+                                    !mb-2
+                                    !flex
+                                    !h-7
+                                    !w-7
+                                    !items-center
+                                    !justify-center
+                                    !rounded-sm
+                                    !bg-[#e5f5f3]
+                                    !text-[#16877d]
+                                "
+                            >
+                                <FaRoute className="!text-[11px]" />
+                            </div>
+
+                            <h3
+                                className="
+                                    !text-[11px]
+                                    !font-bold
+                                    !leading-tight
+                                    !text-slate-800
+
+                                    sm:!text-xs
+                                "
+                            >
+                                Rutas y recorridos
+                            </h3>
+
+                            <p
+                                className="
+                                    !mt-1
+                                    !text-[9px]
+                                    !leading-snug
+                                    !text-slate-500
+                                "
+                            >
+                                Utiliza el mapa para ubicar sitios de interés y
+                                planificar tus recorridos.
+                            </p>
+                        </div>
+
+                        {/* Favoritos */}
+                        <div
+                            className="
+                                !min-w-[210px]
+                                !shrink-0
+                                !border
+                                !border-slate-100
+                                !bg-[#f8fbfb]
+                                !p-2.5
+
+                                sm:!min-w-0
+                                sm:!shrink
+                                sm:!p-3
+
+                                md:!p-3.5
+                            "
+                        >
+                            <div
+                                className="
+                                    !mb-2
+                                    !flex
+                                    !h-7
+                                    !w-7
+                                    !items-center
+                                    !justify-center
+                                    !rounded-sm
+                                    !bg-[#e5f5f3]
+                                    !text-[#16877d]
+                                "
+                            >
+                                <FaHeart className="!text-[11px]" />
+                            </div>
+
+                            <h3
+                                className="
+                                    !text-[11px]
+                                    !font-bold
+                                    !leading-tight
+                                    !text-slate-800
+
+                                    sm:!text-xs
+                                "
+                            >
+                                Lugares para recordar
+                            </h3>
+
+                            <p
+                                className="
+                                    !mt-1
+                                    !text-[9px]
+                                    !leading-snug
+                                    !text-slate-500
+                                "
+                            >
+                                Guarda tus lugares favoritos y crea tu propia lista
+                                de sitios por visitar.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Frase inferior */}
+                    <div
+                        className="
+                            !mt-4
+                            !rounded-sm
+                            !bg-[#16877d]
+                            !px-3
+                            !py-3
+                            !text-center
+
+                            sm:!mt-5
+                            sm:!px-4
+                            sm:!py-3.5
+                        "
+                    >
+                        <h3
+                            className="
+                                !text-[11px]
+                                !font-bold
+                                !leading-tight
+                                !text-white
+
+                                sm:!text-[12px]
+                                md:!text-[12px]
+                            "
+                        >
+                            Tu próxima experiencia comienza aquí.
+                        </h3>
+
+                        <p
+                            className="
+                                !mx-auto
+                                !mt-0.5
+                                !max-w-xl
+                                !text-[9px]
+                                !leading-relaxed
+                                !text-white/80
+
+                                sm:!text-[10px]
+                            "
+                        >
+                            Explora el mapa, descubre nuevos lugares y encuentra
+                            tu próximo destino.
+                        </p>
+                    </div>
                 </div>
             </section>
 
